@@ -6,7 +6,6 @@ from PIL import Image
 from transformers import pipeline
 from deep_translator import GoogleTranslator
 import cv2
-from pyzbar.pyzbar import decode
 
 # Function to auto-rotate an image based on its EXIF data
 def auto_rotate_image(image: Image) -> Image:
@@ -27,14 +26,18 @@ def auto_rotate_image(image: Image) -> Image:
     return image
 
 def scan_image(frame):
+    # Initialize QR code detector
+    qr_detector = cv2.QRCodeDetector()
+
     # Scan for QR codes
-    qr_codes = decode(frame)
-    for qr in qr_codes:
-        qr_data = qr.data.decode('utf-8')
-        st.write(f"QR Code detected: {qr_data}")
-        cv2.rectangle(frame, (qr.rect.left, qr.rect.top), 
-                      (qr.rect.left + qr.rect.width, qr.rect.top + qr.rect.height), 
-                      (0, 255, 0), 2)
+    retval, decoded_info, points, _ = qr_detector.detectAndDecodeMulti(frame)
+    
+    if retval:
+        for s, p in zip(decoded_info, points):
+            if s:
+                st.write(f"QR Code detected: {s}")
+                # Draw polygon around the QR code
+                frame = cv2.polylines(frame, [p.astype(int)], True, (0, 255, 0), 2)
 
     # Scan for text using EasyOCR
     results = reader.readtext(frame)
@@ -42,9 +45,8 @@ def scan_image(frame):
     for (bbox, text, prob) in results:
         extracted_text += text + "\n"
         # Draw bounding box for the text
-        (top_left, top_right, bottom_right, bottom_left) = bbox
-        top_left = tuple(map(int, top_left))
-        bottom_right = tuple(map(int, bottom_right))
+        top_left = tuple(map(int, bbox[0]))
+        bottom_right = tuple(map(int, bbox[2]))
         cv2.rectangle(frame, top_left, bottom_right, (0, 255, 0), 2)
 
     return frame, extracted_text
