@@ -9,7 +9,21 @@ import cv2
 
 # Function to auto-rotate an image based on its EXIF data
 def auto_rotate_image(image: Image) -> Image:
-    # ... (keep this function as is)
+    try:
+        exif = image._getexif()
+        if exif is not None:
+            for tag, value in exif.items():
+                if tag == 274:  # Orientation tag
+                    if value == 3:
+                        image = image.rotate(180, expand=True)
+                    elif value == 6:
+                        image = image.rotate(270, expand=True)
+                    elif value == 8:
+                        image = image.rotate(90, expand=True)
+                    break
+    except (AttributeError, KeyError, IndexError):
+        pass  # No EXIF data, do nothing
+    return image
 
 def preprocess_image(image):
     # Convert to grayscale
