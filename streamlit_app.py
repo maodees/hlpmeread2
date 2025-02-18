@@ -7,7 +7,7 @@ from transformers import pipeline
 from deep_translator import GoogleTranslator
 import cv2
 
-# Function to auto-rotate an image based on its EXIF data
+# Function to auto-rotate an image based on its EXIF dsdata
 def auto_rotate_image(image: Image) -> Image:
     try:
         exif = image._getexif()
