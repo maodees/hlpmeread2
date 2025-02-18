@@ -2,54 +2,37 @@ import streamlit as st
 import easyocr
 import numpy as np
 from gtts import gTTS
-from PIL import Image
+from PIL import Image, ImageEnhance
 from transformers import pipeline
 from deep_translator import GoogleTranslator
 import cv2
 
-# Function to auto-rotate an image based on its EXIF dsata
+# Function to auto-rotate an image based on its EXIF data
 def auto_rotate_image(image: Image) -> Image:
-    try:
-        exif = image._getexif()
-        if exif is not None:
-            for tag, value in exif.items():
-                if tag == 274:  # Orientation tag
-                    if value == 3:
-                        image = image.rotate(180, expand=True)
-                    elif value == 6:
-                        image = image.rotate(270, expand=True)
-                    elif value == 8:
-                        image = image.rotate(90, expand=True)
-                    break
-    except (AttributeError, KeyError, IndexError):
-        pass  # No EXIF data, do nothing
-    return image
+    # ... (keep this function as is)
 
-def scan_image(frame):
-    # Initialize QR code detector
-    qr_detector = cv2.QRCodeDetector()
-
-    # Scan for QR codes
-    retval, decoded_info, points, _ = qr_detector.detectAndDecodeMulti(frame)
+def preprocess_image(image):
+    # Convert to grayscale
+    gray = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2GRAY)
     
-    if retval:
-        for s, p in zip(decoded_info, points):
-            if s:
-                st.write(f"QR Code detected: {s}")
-                # Draw polygon around the QR code
-                frame = cv2.polylines(frame, [p.astype(int)], True, (0, 255, 0), 2)
+    # Apply adaptive thresholding
+    thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+    
+    # Denoise the image
+    denoised = cv2.fastNlMeansDenoising(thresh, None, 10, 7, 21)
+    
+    return Image.fromarray(denoised)
 
+def scan_image(image):
+    # Preprocess the image
+    processed_image = preprocess_image(image)
+    
     # Scan for text using EasyOCR
-    results = reader.readtext(frame)
+    results = reader.readtext(np.array(processed_image))
     extracted_text = ""
-    for (bbox, text, prob) in results:
+    for (_, text, _) in results:
         extracted_text += text + "\n"
-        # Draw bounding box for the text
-        top_left = tuple(map(int, bbox[0]))
-        bottom_right = tuple(map(int, bbox[2]))
-        cv2.rectangle(frame, top_left, bottom_right, (0, 255, 0), 2)
-
-    return frame, extracted_text
+    return extracted_text, processed_image
 
 # Streamlit App Title
 st.title("📝 Help Me Read")
@@ -65,21 +48,31 @@ if input_method == "Upload Image":
     if uploaded_file is not None:
         image = Image.open(uploaded_file)
         image = auto_rotate_image(image)
-        img_array = np.array(image)
         st.image(image, caption="Uploaded Image", use_container_width=True)
-        frame, extracted_text = scan_image(img_array)
+        extracted_text, processed_image = scan_image(image)
+        st.image(processed_image, caption="Processed Image", use_container_width=True)
 else:
-    cap = cv2.VideoCapture(0)
-    stframe = st.empty()
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
-        frame, extracted_text = scan_image(frame)
-        stframe.image(frame, channels="BGR")
-        if st.button('Capture'):
-            break
-    cap.release()
+    camera_image = st.camera_input("Take a picture", key="camera")
+    if camera_image is not None:
+        image = Image.open(camera_image)
+        
+        # Image enhancement options
+        st.subheader("Image Enhancement Options")
+        brightness = st.slider("Brightness", 0.5, 2.0, 1.0, 0.1)
+        contrast = st.slider("Contrast", 0.5, 2.0, 1.0, 0.1)
+        sharpness = st.slider("Sharpness", 0.5, 2.0, 1.0, 0.1)
+        
+        # Apply enhancements
+        enhancer = ImageEnhance.Brightness(image)
+        image = enhancer.enhance(brightness)
+        enhancer = ImageEnhance.Contrast(image)
+        image = enhancer.enhance(contrast)
+        enhancer = ImageEnhance.Sharpness(image)
+        image = enhancer.enhance(sharpness)
+        
+        st.image(image, caption="Enhanced Image", use_container_width=True)
+        extracted_text, processed_image = scan_image(image)
+        st.image(processed_image, caption="Processed Image", use_container_width=True)
 
 if 'extracted_text' in locals() and extracted_text:
     st.subheader("Extracted Text:")
