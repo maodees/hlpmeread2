@@ -4,3 +4,4 @@ gTTS
 pillow
 transformers
 deep_translator
+validators
