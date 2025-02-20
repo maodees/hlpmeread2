@@ -172,7 +172,7 @@ if target_language != "Blank":
             # OCR Processing
             with st.spinner("Extracting text..."):
                 time.sleep(1)  # Simulating loading time (remove it for actual processing)
-                reader = easyocr.Reader(['en'])
+                reader = easyocr.Reader(['en'], gpu=False)
                 results = reader.readtext(img_array)
 
             extracted_text = "\n".join([res[1] for res in results])
