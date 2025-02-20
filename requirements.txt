@@ -3,3 +3,4 @@ easyocr
 gTTS
 pillow
 transformers
+deep_translator
