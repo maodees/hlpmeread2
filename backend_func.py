@@ -1,4 +1,3 @@
-import streamlit as st
 import easyocr
 import numpy as np
 from gtts import gTTS
@@ -8,6 +7,7 @@ from deep_translator import GoogleTranslator
 import cv2
 import validators
 import time
+
 
 # Function to auto-rotate image based on EXIF data
 def auto_rotate_image(image: Image) -> Image:
@@ -23,15 +23,16 @@ def auto_rotate_image(image: Image) -> Image:
                     elif value == 8:
                         image = image.rotate(90, expand=True)
                     break
+
     except (AttributeError, KeyError, IndexError):
         pass  # No EXIF data, do nothing
     return image
-
 # Function to extract QR Code info using OpenCV
+
 def extract_qr_code(image: Image) -> str:
     image_cv = np.array(image)
     gray = cv2.cvtColor(image_cv, cv2.COLOR_RGB2GRAY)
-    qr_detector = cv2.QRCodeDetector()
+    qr_detector = cv2.QCodeDetector()
     retval, decoded_info, points, straight_qrcode = qr_detector.detectAndDecodeMulti(gray)
 
     if retval:
@@ -56,7 +57,6 @@ def summarize_text(text: str) -> str:
 def translate_text(text: str, target_lang: str) -> str:
     translator = GoogleTranslator(source="en", target=target_lang)
     return translator.translate(text)
-
 # Function for text-to-speech conversion
 def generate_speech(text: str, lang: str) -> None:
     tts = gTTS(text=text, lang=lang, slow=False)
@@ -68,22 +68,11 @@ def process_image(image: Image, target_language: str) -> None:
     # QR Code Detection
     qr_info = extract_qr_code(image)
     if qr_info:
-        st.write("QR Code Information: ", " | ".join(qr_info))
+        return "QR Code Information: " + " | ".join(qr_info)
     else:
         extracted_text = extract_text_from_image(img_array)
-        st.subheader("Extracted Text:")
-        st.write(extracted_text)
-
         summarized_text = summarize_text(extracted_text)
-        st.subheader("Summary:")
-        st.write(summarized_text)
-
-        translated_text = translate_text(summarized_text, target_language)
-        st.subheader(f"Translated Text ({target_language}):")
-        st.write(translated_text)
-        
+        translated_text = translate_text(summarized_text, target_language) 
         # Audio Generation
         generate_speech(translated_text, target_language)
-        st.audio("output.mp3", format="audio/mp3")
-        
-        st.download_button("Download Audio", "output.mp3", file_name="speech.mp3")
+        return extracted_text, summarized_text, translated_text
