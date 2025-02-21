@@ -6,10 +6,10 @@ from PIL import Image
 from transformers import pipeline
 from deep_translator import GoogleTranslator
 import cv2
-import validators  # Added to check for URLs
+import validators
 import time
 
-# Function to auto-rotate an image based on its EXIF data
+# Function to auto-rotate image based on EXIF data
 def auto_rotate_image(image: Image) -> Image:
     try:
         exif = image._getexif()
@@ -27,18 +27,63 @@ def auto_rotate_image(image: Image) -> Image:
         pass  # No EXIF data, do nothing
     return image
 
-# Function to extract QR Code info using OpenCV and check for URL
+# Function to extract QR Code info using OpenCV
 def extract_qr_code(image: Image) -> str:
     image_cv = np.array(image)
-    gray = cv2.cvtColor(image_cv, cv2.COLOR_RGB2GRAY)  # Convert to grayscale
+    gray = cv2.cvtColor(image_cv, cv2.COLOR_RGB2GRAY)
     qr_detector = cv2.QRCodeDetector()
     retval, decoded_info, points, straight_qrcode = qr_detector.detectAndDecodeMulti(gray)
 
     if retval:
-        # Filter out URLs and reject QR codes that point to a website
         for data in decoded_info:
-            if validators.url(data):  # Check if the data is a valid URL
+            if validators.url(data):
                 return "Invalid QR code: Website redirection is not allowed"
-        return decoded_info  # List of QR code data found
+        return decoded_info
     return None
 
+# Function for OCR text extraction
+def extract_text_from_image(image: np.ndarray) -> str:
+    reader = easyocr.Reader(['en'])
+    results = reader.readtext(image)
+    return "\n".join([res[1] for res in results])
+
+# Function for text summarization
+def summarize_text(text: str) -> str:
+    summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+    return summarizer(text, max_length=150, min_length=50, do_sample=False)[0]["summary_text"]
+
+# Function for translation
+def translate_text(text: str, target_lang: str) -> str:
+    translator = GoogleTranslator(source="en", target=target_lang)
+    return translator.translate(text)
+
+# Function for text-to-speech conversion
+def generate_speech(text: str, lang: str) -> None:
+    tts = gTTS(text=text, lang=lang, slow=False)
+    tts.save("output.mp3")
+
+# Main function to handle the image upload and processing
+def process_image(image: Image, target_language: str) -> None:
+    img_array = np.array(image)
+    # QR Code Detection
+    qr_info = extract_qr_code(image)
+    if qr_info:
+        st.write("QR Code Information: ", " | ".join(qr_info))
+    else:
+        extracted_text = extract_text_from_image(img_array)
+        st.subheader("Extracted Text:")
+        st.write(extracted_text)
+
+        summarized_text = summarize_text(extracted_text)
+        st.subheader("Summary:")
+        st.write(summarized_text)
+
+        translated_text = translate_text(summarized_text, target_language)
+        st.subheader(f"Translated Text ({target_language}):")
+        st.write(translated_text)
+        
+        # Audio Generation
+        generate_speech(translated_text, target_language)
+        st.audio("output.mp3", format="audio/mp3")
+        
+        st.download_button("Download Audio", "output.mp3", file_name="speech.mp3")
