@@ -8,7 +8,6 @@ import cv2
 import validators
 import time
 
-
 # Function to auto-rotate image based on EXIF data
 def auto_rotate_image(image: Image) -> Image:
     try:
@@ -32,7 +31,7 @@ def auto_rotate_image(image: Image) -> Image:
 def extract_qr_code(image: Image) -> str:
     image_cv = np.array(image)
     gray = cv2.cvtColor(image_cv, cv2.COLOR_RGB2GRAY)
-    qr_detector = cv2.QCodeDetector()
+    qr_detector = cv2.QRCodeDetector()
     retval, decoded_info, points, straight_qrcode = qr_detector.detectAndDecodeMulti(gray)
 
     if retval:
@@ -67,6 +66,7 @@ def process_image(image: Image, target_language: str) -> None:
     img_array = np.array(image)
     # QR Code Detection
     qr_info = extract_qr_code(image)
+
     if qr_info:
         return "QR Code Information: " + " | ".join(qr_info)
     else:
