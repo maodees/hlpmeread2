@@ -1,5 +1,5 @@
 import streamlit as st
-from backend_func import process_image, auto_rotate_image
+from backend_func import process_image, auto_rotate_image, get_language
 from PIL import Image
 # Set Streamlit page configuration
 st.set_page_config(page_title="Help Me Read", layout="wide")
@@ -12,7 +12,9 @@ st.markdown("<p style='text-align: center; font-size: 1.2rem;'>No information wi
 
 st.sidebar.title("🗣️ Language Selection & Input Method")
 languages = {"Blank": "NA", "Chinese": "zh-CN", "Malay": "ms", "Tamil": "ta"}
-target_language = st.sidebar.selectbox("Select your language for translation", list(languages.keys()))
+#target_language = st.sidebar.selectbox("Select your language for translation", list(languages.keys()))
+index = next((i for i, d in enumerate(languages) if get_language() in d), None)
+target_language = st.sidebar.selectbox("Select your language for translation", list(languages.keys()), index)
 input_method = st.sidebar.radio("Choose input method", ("Upload Image", "Use Camera"))
 
 if target_language != "Blank":

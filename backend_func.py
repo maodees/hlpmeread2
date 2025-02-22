@@ -7,6 +7,8 @@ from deep_translator import GoogleTranslator
 import cv2
 import validators
 import time
+import streamlit as st
+from streamlit_js_eval import get_browser_language
 
 # Function to auto-rotate image based on EXIF data
 def auto_rotate_image(image: Image) -> Image:
@@ -76,3 +78,17 @@ def process_image(image: Image, target_language: str) -> None:
         # Audio Generation
         generate_speech(translated_text, target_language)
         return extracted_text, summarized_text, translated_text
+
+def get_language():
+     lang= get_browser_language()
+     match lang.split('-')[0]:
+        case "en":
+            return "English"
+        case "zh":
+            return "Chinese"
+        case "ms":
+            return "Malay"
+        case "ta":
+            return "Tamil"
+        case _:
+            return "Blank"
