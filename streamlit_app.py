@@ -12,10 +12,10 @@ st.markdown("<p style='text-align: center; font-size: 1.2rem;'>No information wi
 
 st.sidebar.title("🗣️ Language Selection & Input Method")
 languages = {"Blank": "NA", "Chinese": "zh-CN", "Malay": "ms", "Tamil": "ta"}
-
+current_lang = get_language()
 #target_language = st.sidebar.selectbox("Select your language for translation", list(languages.keys()))
-index = next((i for i, (key, value) in enumerate(languages.items()) if get_language() == key), None)
-target_language = st.sidebar.selectbox("Select your language for translation", list(languages.keys()), index)
+index = next((i for i, (key, value) in enumerate(languages.items()) if current_lang == key), None)
+target_language = st.sidebar.selectbox("Select your language for translation", list(languages.keys()), index, key="language_selector")
 input_method = st.sidebar.radio("Choose input method", ("Upload Image", "Use Camera"))
 
 if target_language != "Blank":
