@@ -82,7 +82,7 @@ def process_image(image: Image, target_language: str) -> None:
 def get_language():
      lang= get_browser_language()
      #st.write(lang)
-     match lang[0]:
+     match lang:
         case "en":
             return "English"
         case "zh":
