@@ -5,219 +5,317 @@ from gtts import gTTS
 from PIL import Image
 from transformers import pipeline
 from deep_translator import GoogleTranslator
-import cv2
-import validators  # Added to check for URLs
 import time
+import base64
 
-# Function to auto-rotate an image based on its EXIF data
-def auto_rotate_image(image: Image) -> Image:
+# Function to convert image to base64
+def get_base64_image(image_path):
     try:
-        exif = image._getexif()
-        if exif is not None:
-            for tag, value in exif.items():
-                if tag == 274:  # Orientation tag
-                    if value == 3:
-                        image = image.rotate(180, expand=True)
-                    elif value == 6:
-                        image = image.rotate(270, expand=True)
-                    elif value == 8:
-                        image = image.rotate(90, expand=True)
-                    break
-    except (AttributeError, KeyError, IndexError):
-        pass  # No EXIF data, do nothing
-    return image
+        with open(image_path, "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode()
+    except FileNotFoundError:
+        st.error(f"Logo image not found at: {image_path}")
+        return None
 
-# Function to extract QR Code info using OpenCV and check for URL
-def extract_qr_code(image: Image) -> str:
-    image_cv = np.array(image)
-    gray = cv2.cvtColor(image_cv, cv2.COLOR_RGB2GRAY)  # Convert to grayscale
-    qr_detector = cv2.QRCodeDetector()
-    retval, decoded_info, points, straight_qrcode = qr_detector.detectAndDecodeMulti(gray)
+# Get base64 encoded logo (replace 'logo.png' with your actual filename)
+logo_b64 = get_base64_image("HMR_Logo.png")
+if logo_b64:
+    st.markdown(f"""
+        <style>
+        .header-container {{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }}
+        .logo {{
+            width: 70px;
+            height: 70px;
+            margin-left: -1cm;
+        }}
+        .header-text {{
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }}
+        </style>
+        
+        <div class="header-container">
+            <img src="data:image/png;base64,{logo_b64}" class="logo">
+            <h1 class="header-text">HelpMeRead</h1>
+        </div>
+            <h2 class="header-text">Have a letter that you don’t understand?</h2>
+            <h6 class="header-text">We can translate and explain your letters to you so you know what they mean and what to do next.</h6>
+    """, unsafe_allow_html=True)
+else:
+    st.header("Help Me Read")  # Fallback if logo fails to load
 
-    if retval:
-        # Filter out URLs and reject QR codes that point to a website
-        for data in decoded_info:
-            if validators.url(data):  # Check if the data is a valid URL
-                return "Invalid QR code: Website redirection is not allowed"
-        return decoded_info  # List of QR code data found
-    return None
-
-# Set Streamlit page layout for mobile-friendliness
-st.set_page_config(page_title="Help Me Read", layout="wide")
-
-# Custom CSS for styling
-st.markdown(
-    """
+# Inject custom CSS for styling
+st.markdown("""
     <style>
-    .title {
-        text-align: left;
-        font-size: 1.8rem;
-        color: #ff6f61;
+    body {
+        background: linear-gradient(135deg, #1E2A38, #2C3E50) !important;
+        color: white !important;
     }
-    .header {
-        font-size: 1.2rem;
-        color: #333;
+    .stApp {
+        background: linear-gradient(135deg, #1E2A38, #2C3E50) !important;
     }
-    .section-title {
-        font-size: 1.1rem;
-        color: #3b3b3b;
+    .stButton {
+        display: flex;
+        justify-content: center;
     }
-    .download-btn {
-        background-color: #4CAF50;
-        color: white;
-        padding: 12px 20px;
-        font-size: 1.2rem;
+    div.stButton > button {
+        width: 100%;
+        height: 80px;
+        font-size: 24px;
+        color: #FFFFFF;
+        background-color: #007BFF;
+        border: none;
         border-radius: 10px;
-        text-align: center;
+        margin: 10px 0;
+        cursor: pointer;
     }
-    .download-btn:hover {
-        background-color: #45a049;
+    div.stButton > button:hover {
+        background-color: #0056b3;
     }
-    .spinner {
-        text-align: center;
-        margin-top: 20px;
+    .progress-container {
+        width: 100%;
+        background-color: #f0f2f6;
+        border-radius: 8px;
+        margin: 1rem 0;
+        position: relative;
+        overflow: hidden;
     }
-
-    /* Responsive styles for mobile */
-    @media only screen and (max-width: 768px) {
-        .title {
-            font-size: 1.5rem;
-        }
-        .header, .section-title {
-            font-size: 1rem;
-        }
-        .download-btn {
-            font-size: 1rem;
-            padding: 10px 16px;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-        }
+    .progress-bar {
+        width: 0%;
+        height: 20px;
+        background-color: #2575fc;
+        border-radius: 8px;
+        transition: width 0.5s ease;
+    }
+    .progress-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: black;
+        font-weight: bold;
+    }
+    .text-container {
+        padding: 1rem;
+        background-color: white;
+        border-radius: 10px;
+        margin: 1rem 0;
+        color: black;
     }
     </style>
-    """, unsafe_allow_html=True
+""", unsafe_allow_html=True)
+
+# Initialize session state for navigation
+if "screen" not in st.session_state:
+    st.session_state.screen = "language_selection"
+if "target_language" not in st.session_state:
+    st.session_state.target_language = None
+if "uploaded_file" not in st.session_state:
+    st.session_state.uploaded_file = None
+if "extracted_text" not in st.session_state:
+    st.session_state.extracted_text = ""
+if "summary_text" not in st.session_state:
+    st.session_state.summary_text = ""
+if "translated_text" not in st.session_state:
+    st.session_state.translated_text = ""
+
+# Language Selection Screen
+def render_language_selection():
+    st.subheader("Select Your Language")
+    
+    # Adjust button size and arrange buttons in two rows
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("中文", use_container_width=True):
+            st.session_state.target_language = "zh-CN"
+            st.session_state.screen = "image_upload"
+            st.rerun()
+    with col2:
+        if st.button("Bahasa Melayu", use_container_width=True):
+            st.session_state.target_language = "ms"
+            st.session_state.screen = "image_upload"
+            st.rerun()
+
+    col3, col4 = st.columns(2)
+    with col3:
+        if st.button("தமிழ்", use_container_width=True):
+            st.session_state.target_language = "ta"
+            st.session_state.screen = "image_upload"
+            st.rerun()
+    with col4:
+        if st.button("English", use_container_width=True):
+            st.session_state.target_language = "en"
+            st.session_state.screen = "image_upload"
+            st.rerun()
+            
+# Define a dictionary to map language codes to their native names
+LANGUAGE_MAP = {
+    "zh-CN": "中文",
+    "ms": "Bahasa Melayu",
+    "ta": "தமிழ்",
+    "en": "English"
+}
+
+# Fetch the native language name from the dictionary
+native_language = LANGUAGE_MAP.get(st.session_state.target_language, "Unknown")
+
+# Image Upload Screen
+def render_image_upload():
+    st.subheader("Upload an Image or Take a Picture")
+    col1, col2 = st.columns(2)
+    with col1:
+        uploaded_file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
+        if uploaded_file:
+            st.session_state.uploaded_file = uploaded_file
+            st.session_state.screen = "processing"
+            st.rerun()
+    with col2:
+        camera_file = st.camera_input("Take a Picture")
+        if camera_file:
+            st.session_state.uploaded_file = camera_file
+            st.session_state.screen = "processing"
+            st.rerun()
+
+# Processing Screen
+def render_processing():
+    st.markdown(
+    "<h5 style='text-align: center; color: white;'>Please wait a moment for processing to complete.</h5>",
+    unsafe_allow_html=True
 )
 
-# App title with left alignment
-st.markdown("<div class='title'>📝 Help Me Read</div>", unsafe_allow_html=True)
-st.markdown("<div class='section-title'>No information will be collected or stored. This app is for your privacy and convenience.</div>", unsafe_allow_html=True)
-# Section break
-st.markdown("---")
+    # Create an empty placeholder for the progress bar
+    progress_placeholder = st.empty()
 
-# Sidebar for language selection first, followed by input method
-st.sidebar.title("🗣️ Language Selection & Input Method")
+    # Function to update the progress bar with centered text and spinner
+    def update_progress(progress, text):
+        progress_placeholder.markdown(f"""
+            <style>
+                .progress-container {{
+                    width: 100%;
+                    background-color: #f0f2f6;
+                    border-radius: 10px;
+                    height: 30px;
+                    position: relative;
+                    overflow: hidden;
+                }}
+                .progress-bar {{
+                    width: {progress}%;
+                    height: 100%;
+                    background-color: #2575fc;
+                    border-radius: 10px;
+                    transition: width 0.5s ease-in-out;
+                }}
+                .progress-text {{
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    font-weight: bold;
+                    color: black;
+                    font-size: 14px;
+                    z-index: 10;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }}
+                .spinner {{
+                    border: 2px solid rgba(255, 255, 255, 0.3);
+                    border-top: 2px solid black;
+                    border-radius: 50%;
+                    width: 14px;
+                    height: 14px;
+                    animation: spin 0.6s linear infinite;
+                }}
+                @keyframes spin {{
+                    0% {{ transform: rotate(0deg); }}
+                    100% {{ transform: rotate(360deg); }}
+                }}
+            </style>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+                <div class="progress-text">
+                    <div class="spinner"></div> {progress}% - {text}
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+        time.sleep(1)  # Simulate processing delay
 
-# Language selection comes first at the top
-languages = {"Blank": "NA", "Chinese": "zh-CN", "Malay": "ms", "Tamil": "ta"}
-target_language = st.sidebar.selectbox("Select your language for translation", list(languages.keys()))
+    # Initial Progress (Show bar immediately at 15%)
+    update_progress(15, "Initializing...")
 
-# Input method selection
-input_method = st.sidebar.radio("Choose input method", ("Upload Image", "Use Camera"))
+    # Step 1: OCR Processing
+    image = Image.open(st.session_state.uploaded_file)
+    img_array = np.array(image)
+    reader = easyocr.Reader(['en'])
+    results = reader.readtext(img_array)
+    st.session_state.extracted_text = "\n".join([res[1] for res in results])
 
-# Initialize session state if not set
-if 'prev_language' not in st.session_state:
-    st.session_state.prev_language = ""
-if 'prev_qr_info' not in st.session_state:
-    st.session_state.prev_qr_info = None
-if 'prev_uploaded_file' not in st.session_state:
-    st.session_state.prev_uploaded_file = None
+    update_progress(30, "Extracting text...")
 
-# Proceed once language is selected
-if target_language != "Blank":
-    # Image upload or camera input logic
-    image = None
+    # Step 2: Summarization
+    summarizer = pipeline("summarization", model="facebook/bart-large-cnn", device=-1)  # Force CPU only
+    st.session_state.summary_text = summarizer(
+        st.session_state.extracted_text, max_length=150, min_length=50, do_sample=False
+    )[0]["summary_text"]
 
-    if input_method == "Upload Image":
-        uploaded_file = st.sidebar.file_uploader("Upload an Image (or Scan QR)", type=["jpg", "jpeg", "png"])
+    update_progress(70, "Summarizing text...")
 
-        if uploaded_file is not None:
-            image = Image.open(uploaded_file)
+    # Step 3: Translation
+    st.session_state.translated_text = GoogleTranslator(
+        source="en", target=st.session_state.target_language
+    ).translate(st.session_state.summary_text)
 
-    elif input_method == "Use Camera":
-        camera_image = st.camera_input("Take a picture", key="camera")
-        if camera_image is not None:
-            image = Image.open(camera_image)
+    update_progress(90, "Translating text...")
 
-    if image is not None:
-        # Auto-rotate the image
-        image = auto_rotate_image(image)
+    # Step 4: Completion
+    update_progress(100, "Done!")
 
-        img_array = np.array(image)
+    # Finalizing
+    time.sleep(1)
+    st.session_state.screen = "results"
+    st.rerun()
 
-        # Display image with responsive width for mobile
-        st.image(image, caption="Processed Image", width=600)
 
-        # QR Code Detection using OpenCV
-        qr_info = extract_qr_code(image)
+# Results Screen
+def render_results():
+    # Auto-collapsed Extracted Text Section
+    #with st.expander("Show Extracted Text", expanded=False):
+    #    st.markdown(f"{st.session_state.extracted_text}")
 
-        # Store current values in session state
-        st.session_state.prev_language = target_language
-        st.session_state.prev_uploaded_file = uploaded_file
-        st.session_state.prev_qr_info = qr_info
+    # Summary and Translation remain visible
+    #st.markdown(f"**Summary : ** {st.session_state.summary_text}")
 
-        # Show QR Code Information at the top
-        if qr_info:
-            if isinstance(qr_info, str) and qr_info.startswith("Invalid QR code"):
-                st.error(qr_info)  # Display error message if it's an invalid QR code
-            else:
-                st.subheader("QR Code Information:")
-                st.write(" | ".join(qr_info))
-        else:
-            st.subheader("No QR Code Found. Proceeding with OCR...")
+     # Hide extracted text and summary in an expander
+    with st.expander("Show Extracted Text and Summary"):
+        st.markdown("### Extracted Text")
+        st.markdown(f"<div class='text-container'>{st.session_state.extracted_text}</div>", unsafe_allow_html=True)
+        st.markdown("---")
+        st.markdown("### Summary")
+        st.markdown(f"<div class='text-container'>{st.session_state.summary_text}</div>", unsafe_allow_html=True)
+ 
+    st.subheader(f"Translated Text ({native_language}):")
+    st.markdown(f"<div class='text-container'>{st.session_state.translated_text}</div>", unsafe_allow_html=True)
+    st.download_button("Download Translation", st.session_state.translated_text, file_name="translation.txt", mime="text/plain")
 
-            # Section break
-            st.markdown("---")
+    # Add Text-to-Speech
+    tts = gTTS(text=st.session_state.translated_text, lang=st.session_state.target_language, slow=False)
+    tts.save("output.mp3")
+    st.audio("output.mp3", format="audio/mp3")
 
-            # OCR Processing
-            with st.spinner("Extracting text..."):
-                time.sleep(1)  # Simulating loading time (remove it for actual processing)
-                reader = easyocr.Reader(['en'])
-                results = reader.readtext(img_array)
+    # Restart Button
+    st.button("Restart", on_click=lambda: st.session_state.update({"screen": "image_upload", "uploaded_file": None}))
 
-            extracted_text = "\n".join([res[1] for res in results])
-
-            st.subheader("Extracted Text:")
-            st.write(extracted_text)
-
-            # Section break
-            st.markdown("---")
-
-            # Summarization
-            with st.spinner("Summarizing text..."):
-                time.sleep(1)  # Simulating loading time (remove it for actual processing)
-                summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
-                summarized_text = summarizer(extracted_text, max_length=150, min_length=50, do_sample=False)[0]["summary_text"]
-
-            st.subheader("Summary:")
-            st.write(summarized_text)
-
-            # Section break
-            st.markdown("---")
-
-            # Translation
-            with st.spinner("Translating text..."):
-                time.sleep(1)  # Simulating loading time (remove it for actual processing)
-                translator = GoogleTranslator(source="en", target=languages[target_language])
-                translated_text = translator.translate(summarized_text)
-
-            st.subheader(f"Translated Text ({target_language}):")
-            st.write(translated_text)
-            st.download_button("Download Translation", translated_text, file_name="translation.txt", mime="text/plain")
-
-            # Section break
-            st.markdown("---")
-
-            # Text-to-Speech
-            with st.spinner("Generating speech..."):
-                time.sleep(1)  # Simulating loading time (remove it for actual processing)
-                tts = gTTS(text=translated_text, lang=languages[target_language], slow=False)
-                tts.save("output.mp3")
-
-            st.audio("output.mp3", format="audio/mp3")
-
-            # Section break
-            st.markdown("---")
-
-            # Download buttons
-            st.download_button("Download Audio", "output.mp3", file_name="speech.mp3")
+# Render the appropriate screen
+if st.session_state.screen == "language_selection":
+    render_language_selection()
+elif st.session_state.screen == "image_upload":
+    render_image_upload()
+elif st.session_state.screen == "processing":
+    render_processing()
+elif st.session_state.screen == "results":
+    render_results()
