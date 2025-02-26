@@ -1,7 +1,7 @@
 import streamlit as st
 import time
-from backend import process_image
-from utils import get_language, get_base64_image
+from backend import process_image, get_browser_language, get_base64_image, auto_rotate_image
+from PIL import Image
 
 # Load Logo
 logo_b64 = get_base64_image("assets/HMR_Logo.png")
@@ -53,7 +53,8 @@ def render_image_upload():
     uploaded_file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
     
     if uploaded_file:
-        st.session_state.uploaded_file = uploaded_file
+        image = Image.open(uploaded_file)
+        st.session_state.uploaded_file = image
         st.session_state.screen = "processing"
         st.rerun()
 
@@ -68,6 +69,7 @@ def render_processing():
         time.sleep(1)
 
     image = st.session_state.uploaded_file
+    image = auto_rotate_image(image)
     results = process_image(image, st.session_state.target_language)
     
     st.session_state.results = results
