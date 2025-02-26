@@ -1,56 +1,108 @@
 import streamlit as st
-from backend_func import process_image, auto_rotate_image, get_language
-from PIL import Image
-# Set Streamlit page configuration
-st.set_page_config(page_title="Help Me Read", layout="wide")
-# UI Header
-st.markdown("<h1 style='text-align: center; color: #ff6f61;'>📝 Help Me Read</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; font-size: 1.2rem;'>No information will be collected or stored. This app is for your privacy and convenience.</p>", unsafe_allow_html=True)
+import time
+from backend import process_image
+from utils import get_language, get_base64_image
 
+# Load Logo
+logo_b64 = get_base64_image("assets/HMR_Logo.png")
 
-# Language Selection and Input Method
+# UI Styling and Branding
+st.markdown(f"""
+    <style>
+    .header-container {{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }}
+    .logo {{
+        width: 70px;
+        height: 70px;
+        margin-left: -1cm;
+    }}
+    </style>
+    <div class="header-container">
+        <img src="data:image/png;base64,{logo_b64}" class="logo">
+        <h1 class="header-text">HelpMeRead</h1>
+    </div>
+""", unsafe_allow_html=True)
 
-st.sidebar.title("🗣️ Language Selection & Input Method")
-languages = {"Blank": "NA", "Chinese": "zh-CN", "Malay": "ms", "Tamil": "ta"}
-current_lang = get_language()
-#target_language = st.sidebar.selectbox("Select your language for translation", list(languages.keys()))
-index = next((i for i, (key, value) in enumerate(languages.items()) if current_lang == key), None)
-target_language = st.sidebar.selectbox("Select your language for translation", list(languages.keys()), index, key="language_selector")
-input_method = st.sidebar.radio("Choose input method", ("Upload Image", "Use Camera"))
+# Session state for navigation
+if "screen" not in st.session_state:
+    st.session_state.screen = "language_selection"
+if "target_language" not in st.session_state:
+    st.session_state.target_language = None
+if "uploaded_file" not in st.session_state:
+    st.session_state.uploaded_file = None
+if "results" not in st.session_state:
+    st.session_state.results = None
 
-if target_language != "Blank":
-    image = None
+# Language Selection
+def render_language_selection():
+    st.subheader("Select Your Language")
+    
+    language_map = {"中文": "zh-CN", "Bahasa Melayu": "ms", "தமிழ்": "ta", "English": "en"}
+    for lang, code in language_map.items():
+        if st.button(lang, use_container_width=True):
+            st.session_state.target_language = code
+            st.session_state.screen = "image_upload"
+            st.rerun()
 
-    # Image Upload or Camera Capture
-    if input_method == "Upload Image":
-        uploaded_file = st.sidebar.file_uploader("Upload an Image (or Scan QR)", type=["jpg", "jpeg", "png"])
-        if uploaded_file is not None:
-            image = Image.open(uploaded_file)
-    elif input_method == "Use Camera":
-        camera_image = st.camera_input("Take a picture")
-        if camera_image is not None:
-            image = Image.open(camera_image)
+# Image Upload
+def render_image_upload():
+    st.subheader("Upload an Image or Take a Picture")
+    uploaded_file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
+    
+    if uploaded_file:
+        st.session_state.uploaded_file = uploaded_file
+        st.session_state.screen = "processing"
+        st.rerun()
 
-    if image is not None:
-        st.image(image, caption="Processed Image", width=600)
-        image = auto_rotate_image(image)
+# Processing
+def render_processing():
+    st.markdown("<h5 style='text-align: center;'>Processing your image...</h5>", unsafe_allow_html=True)
 
-        # Process image (OCR, QR code detection, translation, TTS)
-        result = process_image(image, languages[target_language])
-        if isinstance(result, str):
-            # Display QR Code information
-            st.write(result)
+    progress_placeholder = st.empty()
+    
+    for percent in [20, 50, 80, 100]:
+        progress_placeholder.progress(percent)
+        time.sleep(1)
 
-        else:
-            # Display Extracted Text
-            extracted_text, summarized_text, translated_text = result
-            st.subheader("Extracted Text:")
-            st.write(extracted_text)
-            st.subheader("Summary:")
-            st.write(summarized_text)
-            st.subheader(f"Translated Text ({target_language}):")
-            st.write(translated_text)
+    image = st.session_state.uploaded_file
+    results = process_image(image, st.session_state.target_language)
+    
+    st.session_state.results = results
+    st.session_state.screen = "results"
+    st.rerun()
 
-            # Audio Generation
-            st.audio("output.mp3", format="audio/mp3")
-            st.download_button("Download Audio", "output.mp3", file_name="speech.mp3")
+# Results
+def render_results():
+    extracted_text, summarized_text, translated_text = st.session_state.results
+    
+    with st.expander("Extracted Text"):
+        st.write(extracted_text)
+
+    with st.expander("Summary"):
+        st.write(summarized_text)
+
+    st.subheader("Translated Text:")
+    st.write(translated_text)
+
+    st.download_button("Download Translation", translated_text, file_name="translation.txt", mime="text/plain")
+    
+    st.audio("output.mp3", format="audio/mp3")
+
+    if st.button("Restart"):
+        st.session_state.screen = "language_selection"
+        st.session_state.uploaded_file = None
+        st.session_state.results = None
+        st.rerun()
+
+# Navigation Logic
+if st.session_state.screen == "language_selection":
+    render_language_selection()
+elif st.session_state.screen == "image_upload":
+    render_image_upload()
+elif st.session_state.screen == "processing":
+    render_processing()
+elif st.session_state.screen == "results":
+    render_results()
