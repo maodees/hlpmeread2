@@ -1,5 +1,5 @@
 import streamlit as st
-from backend_func import process_image, auto_rotate_image, get_language
+from backend_func_1 import process_image, auto_rotate_image, get_language
 from PIL import Image
 # Set Streamlit page configuration
 st.set_page_config(page_title="Help Me Read", layout="wide")
