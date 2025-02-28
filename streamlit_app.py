@@ -131,47 +131,45 @@ def render_language_selection():
     st.markdown(
     """
       <style>
-        /* Center container */
+    /* Ensure 2 buttons per row */
+    .button-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* 2 buttons per row */
+        gap: 10px; /* Space between buttons */
+        max-width: 400px; /* Limit container width */
+        margin: auto;
+    }
+
+    .stButton>button {
+        width: 100%;
+        height: 50px !important;
+        font-size: 18px !important;
+        border-radius: 8px !important;
+        border: 2px solid white !important;
+        padding: 16px !important;
+    }
+
+    /* Mobile view adjustments */
+    @media only screen and (max-width: 600px) {
         .button-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px; /* Space between buttons */
-            max-width: 400px; /* Control width */
-            margin: auto;
+            grid-template-columns: repeat(2, 1fr); /* Ensure 2 buttons per row */
+            gap: 10px;
         }
 
-        /* Button styling */
         .stButton>button {
-            width: 48% !important; /* Make two buttons per row */
-            min-width: 150px;
-            height: 50px !important;
-            font-size: 18px !important;
-            border-radius: 8px !important;
-            border: 2px solid white !important;
-            padding: 16px !important;
+            width: 100%; /* Allow buttons to shrink */
+            height: auto;
+            font-size: 16px !important;
         }
-
-        /* Mobile view adjustments */
-        @media only screen and (max-width: 600px) {
-            .button-container {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr); /* Ensure 2 buttons per row */
-                gap: 10px;
-            }
-
-            .stButton>button {
-                width: 100% !important; /* Allow buttons to shrink */
-                height: auto;
-                font-size: 16px !important;
-            }
-        }
+    }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
+
     # Adjust button size and arrange buttons in two rows
+    st.markdown('<div class="button-container">', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     with col1:
         if st.button("中文", use_container_width=True):
@@ -195,7 +193,8 @@ def render_language_selection():
             st.session_state.target_language = "en"
             st.session_state.screen = "image_upload"
             st.rerun()
-            
+    st.markdown('</div>', unsafe_allow_html=True)
+    
 # Define a dictionary to map language codes to their native names
 LANGUAGE_MAP = {
     "zh-CN": "中文",
