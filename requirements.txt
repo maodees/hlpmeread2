@@ -6,3 +6,4 @@ transformers
 deep_translator
 validators
 streamlit-js-eval
+pip install --upgrade streamlit
