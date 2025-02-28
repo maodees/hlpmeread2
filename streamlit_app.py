@@ -131,19 +131,20 @@ def render_language_selection():
     st.markdown(
     """
      <style>
-        /* Centering the button container */
+        /* Center container */
         .button-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Two per row */
-            gap: 10px; /* Space between buttons */
+            display: flex;
+            flex-wrap: wrap;
             justify-content: center;
-            max-width: 350px; /* Limit width for better spacing */
-            margin: auto; /* Center container */
+            gap: 10px; /* Space between buttons */
+            max-width: 400px; /* Control width */
+            margin: auto;
         }
 
         /* Button styling */
         .stButton>button {
-            width: 100% !important;
+            width: 48% !important; /* Make two buttons per row */
+            min-width: 150px;
             height: 50px !important;
             font-size: 18px !important;
             border-radius: 8px !important;
