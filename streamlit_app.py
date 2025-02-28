@@ -130,7 +130,7 @@ def render_language_selection():
     
     st.markdown(
     """
-     <style>
+      <style>
         /* Center container */
         .button-container {
             display: flex;
@@ -154,9 +154,16 @@ def render_language_selection():
 
         /* Mobile view adjustments */
         @media only screen and (max-width: 600px) {
+            .button-container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr); /* Ensure 2 buttons per row */
+                gap: 10px;
+            }
+
             .stButton>button {
-                width: 48% !important; /* Maintain two buttons per row even on mobile */
-                min-width: 120px; /* Adjust minimum width to fit buttons */
+                width: 100% !important; /* Allow buttons to shrink */
+                height: auto;
+                font-size: 16px !important;
             }
         }
     </style>
