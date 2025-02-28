@@ -1,4 +1,5 @@
-import easyocr
+#import easyocr
+from paddleocr import PaddleOCR
 import numpy as np
 from gtts import gTTS
 from PIL import Image
@@ -44,11 +45,24 @@ def extract_qr_code(image: Image) -> str:
         return decoded_info
     return None
 
+'''
 # Function for OCR text extraction
 def extract_text_from_image(image: np.ndarray) -> str:
     reader = easyocr.Reader(['en'])
     results = reader.readtext(image)
     return "\n".join([res[1] for res in results])
+'''
+
+#replacing the OCR method to use Paddle
+def extract_text_from_image(image: np.ndarray) -> str:
+    # Initialize the PaddleOCR reader
+    ocr = PaddleOCR(use_angle_cls=True, lang='en')  # Set lang to 'en' for English OCR
+    # Perform OCR
+    result = ocr.ocr(image, cls=True)
+    # Combine OCR results into a single string
+    # The result is a list of lines, each containing a tuple with bounding box and recognized text
+    extracted_text = '\n'.join([line[1][0] for line in result[0]])  # line[1][0] contains the recognized text
+    return extracted_text
 
 # Function for text summarization
 def summarize_text(text: str) -> str:
