@@ -130,15 +130,19 @@ def render_language_selection():
     
     st.markdown(
     """
-    <style>
+   <style>
         .stButton>button {
-            width: 164px !important;
+            width: 100% !important;  /* Makes sure buttons take full width of column */
             height: 50px !important;
             font-size: 20px !important;
             border-radius: 8px !important;
             border: 2px solid #FFFFFF !important;
             padding: 16px !important;
-            margin: 5px !important; /* Half of gap (10px) */
+            margin: 5px !important;  /* Adds space between buttons */
+        }
+        /* Adjust button spacing */
+        .st-emotion-cache-1y4p8pa {
+            gap: 10px !important;
         }
     </style>
     """,
