@@ -1,5 +1,4 @@
-#import easyocr
-from paddleocr import PaddleOCR
+import easyocr
 import numpy as np
 from gtts import gTTS
 from PIL import Image
