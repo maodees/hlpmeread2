@@ -130,7 +130,7 @@ def render_language_selection():
     
     st.markdown(
     """
-      <style>
+    <style>
     /* Ensure 2 buttons per row */
     .button-container {
         display: grid;
@@ -140,8 +140,9 @@ def render_language_selection():
         margin: auto;
     }
 
-    .stButton>button {
-        width: 100%;
+    /* Apply button styles only inside .button-container */
+    .button-container .stButton>button {
+        width: 100%; /* Ensure buttons stretch to fill grid cell */
         height: 50px !important;
         font-size: 18px !important;
         border-radius: 8px !important;
@@ -156,7 +157,7 @@ def render_language_selection():
             gap: 10px;
         }
 
-        .stButton>button {
+        .button-container .stButton>button {
             width: 100%; /* Allow buttons to shrink */
             height: auto;
             font-size: 16px !important;
@@ -170,31 +171,29 @@ def render_language_selection():
 
     # Adjust button size and arrange buttons in two rows
     st.markdown('<div class="button-container">', unsafe_allow_html=True)
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("中文", use_container_width=True):
-            st.session_state.target_language = "zh-CN"
-            st.session_state.screen = "image_upload"
-            st.rerun()
-    with col2:
-        if st.button("Bahasa Melayu", use_container_width=True):
-            st.session_state.target_language = "ms"
-            st.session_state.screen = "image_upload"
-            st.rerun()
 
-    col3, col4 = st.columns(2)
-    with col3:
-        if st.button("தமிழ்", use_container_width=True):
-            st.session_state.target_language = "ta"
-            st.session_state.screen = "image_upload"
-            st.rerun()
-    with col4:
-        if st.button("English", use_container_width=True):
-            st.session_state.target_language = "en"
-            st.session_state.screen = "image_upload"
-            st.rerun()
+    if st.button("中文", use_container_width=True):
+        st.session_state.target_language = "zh-CN"
+        st.session_state.screen = "image_upload"
+        st.rerun()
+
+    if st.button("Bahasa Melayu", use_container_width=True):
+        st.session_state.target_language = "ms"
+        st.session_state.screen = "image_upload"
+        st.rerun()
+
+    if st.button("தமிழ்", use_container_width=True):
+        st.session_state.target_language = "ta"
+        st.session_state.screen = "image_upload"
+        st.rerun()
+
+    if st.button("English", use_container_width=True):
+        st.session_state.target_language = "en"
+        st.session_state.screen = "image_upload"
+        st.rerun()
+
     st.markdown('</div>', unsafe_allow_html=True)
-    
+
 # Define a dictionary to map language codes to their native names
 LANGUAGE_MAP = {
     "zh-CN": "中文",
