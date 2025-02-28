@@ -127,7 +127,6 @@ if "translated_text" not in st.session_state:
 # Language Selection Screen
 def render_language_selection():
 
-    st.subheader("Select Your Language")
     st.markdown("""
         <style>
         /* Prevent horizontal blocks from wrapping and center their content */
@@ -170,9 +169,14 @@ def render_language_selection():
             padding: 2px 4px;
             margin: 0 !important;
         }
+
+        .custom-text {
+        font-size: 20px;  /* Adjust the font size as needed */
+        text-align: center;
+        }        
         </style>
 """, unsafe_allow_html=True)
-
+    st.markdown('<p class="custom-text">I want to understand my letters in: </p>', unsafe_allow_html=True)
     # Adjust button size and arrange buttons in two rows
     col1, col2 = st.columns(2)
     with col1:
