@@ -5,3 +5,4 @@ pillow
 transformers
 deep_translator
 validators
+streamlit-js-eval
