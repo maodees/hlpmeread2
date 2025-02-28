@@ -108,5 +108,3 @@ elif st.session_state.screen == "processing":
     render_processing()
 elif st.session_state.screen == "results":
     render_results()
-
-
