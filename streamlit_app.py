@@ -151,6 +151,14 @@ def render_language_selection():
             border: 2px solid white !important;
             padding: 16px !important;
         }
+
+        /* Mobile view adjustments */
+        @media only screen and (max-width: 600px) {
+            .stButton>button {
+                width: 48% !important; /* Maintain two buttons per row even on mobile */
+                min-width: 120px; /* Adjust minimum width to fit buttons */
+            }
+        }
     </style>
     """,
     unsafe_allow_html=True,
