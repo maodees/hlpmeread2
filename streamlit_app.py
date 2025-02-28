@@ -7,6 +7,7 @@ from transformers import pipeline
 from deep_translator import GoogleTranslator
 import time
 import base64
+import streamlit.components.v1 as components
 
 # Function to convert image to base64
 def get_base64_image(image_path):
@@ -304,7 +305,7 @@ def render_processing():
     results = reader.readtext(img_array)
     st.session_state.extracted_text = "\n".join([res[1] for res in results])
 
-    update_progress(30, "Extracting text...")
+    update_progress(25, "Processing...")
 
     # Step 2: Summarization
     summarizer = pipeline("summarization", model="facebook/bart-large-cnn", device=-1)  # Force CPU only
@@ -312,14 +313,14 @@ def render_processing():
         st.session_state.extracted_text, max_length=150, min_length=50, do_sample=False
     )[0]["summary_text"]
 
-    update_progress(70, "Summarizing text...")
+    update_progress(70, "Summarizing...")
 
     # Step 3: Translation
     st.session_state.translated_text = GoogleTranslator(
         source="en", target=st.session_state.target_language
     ).translate(st.session_state.summary_text)
 
-    update_progress(90, "Translating text...")
+    update_progress(90, "Translating...")
 
     # Step 4: Completion
     update_progress(100, "Done!")
@@ -332,14 +333,78 @@ def render_processing():
 
 # Results Screen
 def render_results():
-    # Auto-collapsed Extracted Text Section
-    #with st.expander("Show Extracted Text", expanded=False):
-    #    st.markdown(f"{st.session_state.extracted_text}")
 
-    # Summary and Translation remain visible
-    #st.markdown(f"**Summary : ** {st.session_state.summary_text}")
+    st.subheader(f"Translated Text ({native_language}):")
+    st.markdown(f"<div class='text-container'>{st.session_state.translated_text}</div>", unsafe_allow_html=True)
+    #st.download_button("Download Translation", st.session_state.translated_text, file_name="translation.txt", mime="text/plain")
 
-     # Hide extracted text and summary in an expander
+    # Generate and save audio file
+    tts = gTTS(text=st.session_state.translated_text, lang=st.session_state.target_language, slow=False)
+    audio_path = "output.mp3"
+    tts.save(audio_path)
+
+
+# Generate and save the audio file
+    audio_path = "output.mp3"
+    tts = gTTS(text=st.session_state.translated_text, lang=st.session_state.target_language, slow=False)
+    tts.save(audio_path)
+
+    # Convert the audio file to base64 once
+    with open(audio_path, "rb") as f:
+        audio_base64 = base64.b64encode(f.read()).decode()
+
+    # Build one HTML snippet that auto-plays and provides a Play Again button.
+    html_code = f"""
+    <html>
+    <head>
+        <script>
+        // Function to replay the audio from the beginning
+        function playAgain() {{
+            var audio = document.getElementById("autoplay_audio");
+            if (audio) {{
+            audio.currentTime = 0;
+            audio.play();
+            }}
+        }}
+        // Use a slight delay to auto-play the audio once the element exists
+        setTimeout(function() {{
+            var audio = document.getElementById("autoplay_audio");
+            if (audio) {{
+            audio.play();
+            }}
+        }}, 1000);
+        </script>
+    </head>
+    <body>
+        <!-- Hidden audio element -->
+        <audio id="autoplay_audio" style="display:none;">
+        <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
+        Your browser does not support the audio element.
+        </audio>
+        <!-- Custom Play Again button -->
+        <button onclick="playAgain()" style="
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 10px;">
+        🔊 Play Again
+        </button>
+    </body>
+    </html>
+    """
+
+    components.html(html_code, height=80)
+
+    # Restart Button
+    st.button("Restart", on_click=lambda: st.session_state.update({"screen": "image_upload", "uploaded_file": None}))
+
+    # Hide extracted text and summary in an expander
     with st.expander("Show Extracted Text and Summary"):
         st.markdown("### Extracted Text")
         st.markdown(f"<div class='text-container'>{st.session_state.extracted_text}</div>", unsafe_allow_html=True)
@@ -347,17 +412,6 @@ def render_results():
         st.markdown("### Summary")
         st.markdown(f"<div class='text-container'>{st.session_state.summary_text}</div>", unsafe_allow_html=True)
  
-    st.subheader(f"Translated Text ({native_language}):")
-    st.markdown(f"<div class='text-container'>{st.session_state.translated_text}</div>", unsafe_allow_html=True)
-    st.download_button("Download Translation", st.session_state.translated_text, file_name="translation.txt", mime="text/plain")
-
-    # Add Text-to-Speech
-    tts = gTTS(text=st.session_state.translated_text, lang=st.session_state.target_language, slow=False)
-    tts.save("output.mp3")
-    st.audio("output.mp3", format="audio/mp3")
-
-    # Restart Button
-    st.button("Restart", on_click=lambda: st.session_state.update({"screen": "image_upload", "uploaded_file": None}))
 
 # Render the appropriate screen
 if st.session_state.screen == "language_selection":
