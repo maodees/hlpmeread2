@@ -131,28 +131,22 @@ def render_language_selection():
     st.markdown(
     """
     <style>
-        /* Default button styling */
+        /* Centering the button container */
+        .button-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Always two buttons per row */
+            gap: 10px; /* Space between buttons */
+            justify-content: center;
+        }
+
+        /* Button styling */
         .stButton>button {
             width: 100% !important;
             height: 50px !important;
             font-size: 18px !important;
             border-radius: 8px !important;
-            border: 2px solid #FFFFFF !important;
+            border: 2px solid white !important;
             padding: 16px !important;
-            margin: 5px !important; /* Spacing between buttons */
-        }
-        
-        /* Ensure buttons stay in two columns on smaller screens */
-        @media (max-width: 600px) {
-            .st-emotion-cache-1y4p8pa {
-                display: flex !important;
-                flex-wrap: wrap !important;
-                justify-content: center !important;
-                gap: 10px !important;
-            }
-            .stButton>button {
-                width: 45% !important;  /* Shrinks button width on mobile */
-            }
         }
     </style>
     """,
