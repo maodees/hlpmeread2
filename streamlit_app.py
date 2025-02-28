@@ -128,6 +128,23 @@ if "translated_text" not in st.session_state:
 def render_language_selection():
     st.subheader("Select Your Language")
     
+    st.markdown(
+    """
+    <style>
+        .stButton>button {
+            width: 164px !important;
+            height: 50px !important;
+            font-size: 20px !important;
+            border-radius: 8px !important;
+            border: 2px solid #FFFFFF !important;
+            padding: 16px !important;
+            margin: 5px !important; /* Half of gap (10px) */
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
     # Adjust button size and arrange buttons in two rows
     col1, col2 = st.columns(2)
     with col1:
