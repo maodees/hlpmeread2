@@ -126,37 +126,69 @@ if "translated_text" not in st.session_state:
 
 # Language Selection Screen
 def render_language_selection():
-    
     st.subheader("Select Your Language")
 
-    # Create two columns for the buttons
-    col1, col2 = st.columns(2)
+    # Custom CSS for grid-style button layout
+    st.markdown("""
+        <style>
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);  /* 2 buttons per row */
+            gap: 10px;
+            max-width: 400px;
+            margin: auto;
+        }
+        
+        .button-container .stButton > button {
+            width: 100%;
+            height: 60px;
+            font-size: 18px;
+            border-radius: 8px;
+            padding: 15px;
+            box-sizing: border-box;
+            border: 2px solid white;
+        }
+        
+        /* Mobile view adjustments */
+        @media only screen and (max-width: 600px) {
+            .button-container {
+                grid-template-columns: 1fr 1fr;  /* Two buttons per row on mobile */
+            }
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
-    with col1:
-        if st.button("中文"):
-            st.session_state.target_language = "zh-CN"
-            st.session_state.screen = "image_upload"
-            st.rerun()
+    # Button container with grid layout
+    st.markdown('<div class="button-container">', unsafe_allow_html=True)
 
-    with col2:
-        if st.button("Bahasa Melayu"):
-            st.session_state.target_language = "ms"
-            st.session_state.screen = "image_upload"
-            st.rerun()
+    # Create buttons inside the container
+    if st.button("中文", use_container_width=True):
+        st.session_state.target_language = "zh-CN"
+        st.session_state.screen = "image_upload"
+        st.rerun()
 
-    col1, col2 = st.columns(2)  # Redefining the columns for the remaining buttons
+    if st.button("Bahasa Melayu", use_container_width=True):
+        st.session_state.target_language = "ms"
+        st.session_state.screen = "image_upload"
+        st.rerun()
 
-    with col1:
-        if st.button("தமிழ்"):
-            st.session_state.target_language = "ta"
-            st.session_state.screen = "image_upload"
-            st.rerun()
+    if st.button("தமிழ்", use_container_width=True):
+        st.session_state.target_language = "ta"
+        st.session_state.screen = "image_upload"
+        st.rerun()
 
-    with col2:
-        if st.button("English"):
-            st.session_state.target_language = "en"
-            st.session_state.screen = "image_upload"
-            st.rerun()
+    if st.button("English", use_container_width=True):
+        st.session_state.target_language = "en"
+        st.session_state.screen = "image_upload"
+        st.rerun()
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+# Render the appropriate screen
+if st.session_state.screen == "language_selection":
+    render_language_selection()
+
 
 # Define a dictionary to map language codes to their native names
 LANGUAGE_MAP = {
