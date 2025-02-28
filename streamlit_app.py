@@ -353,7 +353,7 @@ def render_results():
     with open(audio_path, "rb") as f:
         audio_base64 = base64.b64encode(f.read()).decode()
 
-    # Build one HTML snippet that auto-plays and provides a Play Again button.
+    # HTML snippet for auto-play and play button.
     html_code = f"""
     <html>
     <head>
@@ -424,3 +424,22 @@ elif st.session_state.screen == "results":
     render_results()
 
 
+
+
+#----------Change log-------------
+#22 Feb:(RK)
+#Change general UI based on mockup
+
+#24 Feb:(RK)
+#Change to 4 screens. Select Lang-> Upload/Cam -> Process -> Results
+#Add restart button on the results screen.
+
+#25 Feb:(RK)
+#Include a progress bar with percentage value in Process screen
+#Add logo on the front page
+
+#28 Feb: (RK)
+#Re-arranged 1st screen language buttons
+#Enable auto play of audio once translation is completed.
+#Change to large play audio again button.
+#Hide extracted text and summary at the bottom of the last screen(For testing purpose)
