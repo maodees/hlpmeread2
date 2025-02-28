@@ -1,8 +1,9 @@
 streamlit
 easyocr
 gTTS
-pillow
+Pillow  # Corrected: 'pillow' should be capitalized as 'Pillow'
 transformers
-deep_translator
+deep-translator
 validators
 streamlit-js-eval
+opencv-python  # Added for OpenCV support with easyOCR
