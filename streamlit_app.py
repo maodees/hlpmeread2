@@ -130,13 +130,15 @@ def render_language_selection():
     
     st.markdown(
     """
-    <style>
+     <style>
         /* Centering the button container */
         .button-container {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* Always two buttons per row */
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Two per row */
             gap: 10px; /* Space between buttons */
             justify-content: center;
+            max-width: 350px; /* Limit width for better spacing */
+            margin: auto; /* Center container */
         }
 
         /* Button styling */
