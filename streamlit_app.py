@@ -156,110 +156,178 @@ if "translated_text" not in st.session_state:
     st.session_state.translated_text = ""
 
 def render_language_selection():
-    # Initialize session state if not exists
-    if 'target_language' not in st.session_state:
-        st.session_state.target_language = None
-    # Get the translations based on selected language, default to English
+    # Get translations
     selected_lang = st.session_state.get('target_language', 'en')
     translations = HEADER_TRANSLATIONS.get(selected_lang, HEADER_TRANSLATIONS['en'])
 
-    # Your existing CSS styles remain the same
     st.markdown("""
-    <style>
-    /* Your existing CSS styles */
-    /* Language Selection Button styles */
-    div[data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-wrap: nowrap !important;
-        justify-content: center !important;
-        gap: 15px !important;
-        margin: 0 auto !important;
-        padding: 0 !important;
-        width: fit-content !important;
-    }
+        <style>
+        /* Center all content */
+        .block-container {
+            max-width: 1000px !important;
+            padding-top: 2rem !important;
+            padding-bottom: 0rem !important;
+        }
 
-    div[data-testid="stHorizontalBlock"] .stButton > button {
-        width: 164px !important;
-        height: 80px !important;
-        padding: 16px !important;
-        border-radius: 8px !important;
-        border: 2px solid white !important;
-        background: transparent !important;
-        color: white !important;
-        font-size: 18px !important;
-        font-weight: bold !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 8px !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2) !important;
-        transition: all 0.3s ease-in-out !important;
-    }
+        /* Force horizontal layout and center content */
+        [data-testid="stHorizontalBlock"] {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            justify-content: center !important;
+            gap: 15px !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            width: 343px !important;  /* Set fixed width to match button grid */
+        }
 
-    div[data-testid="stHorizontalBlock"] .stButton > button:hover {
-        transform: scale(1.05) !important;
-        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3) !important;
-    }
+        /* Fixed width columns */
+        [data-testid="stColumn"] {
+            display: inline-block !important;
+            width: 164px !important;
+            min-width: 164px !important;
+            max-width: 164px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
 
-    div[data-testid="stHorizontalBlock"] .stButton > button:focus {
-        background: #EAF3FF !important;
-        color: #1B8DFF !important;
-        border: 2px solid #1B8DFF !important;
-        font-weight: bold !important
-    }
+        /* Button container */
+        .button-container {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 15px !important;
+            margin: 0 auto !important;
+            width: 343px !important;
+        }
 
-    }
-    </style>
+        /* Language button styling */
+        .stButton > button {
+            width: 164px !important;
+            height: 80px !important;
+            padding: 16px !important;
+            border-radius: 8px !important;
+            border: 2px solid white !important;
+            background: transparent !important;
+            color: white !important;
+            font-size: 18px !important;
+            font-weight: bold !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+
+        /* Continue button styling */
+        .continue-button .stButton > button {
+            width: 343px !important;
+            height: 80px !important;
+            background: white !important;
+            color: #1B8DFF !important;
+            border: none !important;
+            border-radius: 8px !important;
+            font-size: 24px !important;
+            font-weight: bold !important;
+        }
+
+        /* Hover effects */
+        .stButton > button:hover {
+            transform: scale(1.05) !important;
+            box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .stButton > button:focus {
+            background: #EAF3FF !important;
+            color: #1B8DFF !important;
+            border: 2px solid #1B8DFF !important;
+            font-weight: bold !important;
+        }
+
+        /* Prompt text styling */
+        .custom-text {
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        /* Center continue button container */
+        .continue-button {
+            display: flex !important;
+            justify-content: center !important;
+            margin-top: 20px !important;
+            width: 100% !important;
+        }
+        </style>
     """, unsafe_allow_html=True)
 
-     # Update the prompt text with translation
+    # Display prompt text
     st.markdown(f'<p class="custom-text">{translations["prompt"]}</p>', unsafe_allow_html=True)
 
-    # Language selection buttons
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("中文", key="language_zh", use_container_width=True):
-            st.session_state.target_language = "zh-CN"
-            st.rerun()
-    with col2:
-        if st.button("Bahasa Melayu", key="language_ms", use_container_width=True):
-            st.session_state.target_language = "ms"
-            st.rerun()
-
-    col3, col4 = st.columns(2)
-    with col3:
-        if st.button("தமிழ்", key="language_ta", use_container_width=True):
-            st.session_state.target_language = "ta"
-            st.rerun()
-    with col4:
-        if st.button("English", key="language_en", use_container_width=True):
-            st.session_state.target_language = "en"
-            st.rerun()
-
-    if st.session_state.target_language:
-        st.markdown("""
-            <style>
-            /* Larger Continue Button styles */
-            div.stButton > button:last-child {
-                width: 500px !important;  /* Increased width */
-                height: 80px !important;  /* Increased height */
-                justify-content: center !important;
-            }
-            </style>
-        """, unsafe_allow_html=True)
-
-        # Center the continue button using columns
-        col1, col2, col3 = st.columns([1, 3, 1])
+  # Language buttons container
+    with st.container():
+        st.markdown('<div class="button-container">', unsafe_allow_html=True)
+        
+        # First row of language buttons
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("中文", key="language_zh", use_container_width=True):
+                st.session_state.target_language = "zh-CN"
+                st.rerun()
         with col2:
-            if st.button(translations["continue"], key="continue_button"):
-                st.session_state.screen = "image_upload"
+            if st.button("Bahasa Melayu", key="language_ms", use_container_width=True):
+                st.session_state.target_language = "ms"
                 st.rerun()
 
+        # Second row of language buttons
+        col3, col4 = st.columns(2)
+        with col3:
+            if st.button("தமிழ்", key="language_ta", use_container_width=True):
+                st.session_state.target_language = "ta"
+                st.rerun()
+        with col4:
+            if st.button("English", key="language_en", use_container_width=True):
+                st.session_state.target_language = "en"
+                st.rerun()
 
+        st.markdown('</div>', unsafe_allow_html=True)
 
+    # Add minimal spacing between containers
+    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+
+    # Continue button container
+    if st.session_state.target_language:
+        with st.container():
+            st.markdown("""
+                <style>
+                /* Continue Button styles */
+                .continue-wrapper {
+                    display: flex;
+                    justify-content: center;
+                    width: 100%;
+                    margin-top: 10px;
+                }
+                div.stButton > button:last-child {
+                    width: 343px !important;
+                    height: 80px !important;
+                }
+                </style>
+                <div class="continue-wrapper">
+            """, unsafe_allow_html=True)
+            
+            # Center the continue button using columns
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with st.container():
+                if st.button(translations["continue"], key="continue_button", use_container_width=True):
+                    st.session_state.screen = "image_upload"
+                    st.rerun()
+            
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+          
 # Define a dictionary to map language codes to their native names
 LANGUAGE_MAP = {
     "zh-CN": "中文",
@@ -273,7 +341,7 @@ native_language = LANGUAGE_MAP.get(st.session_state.target_language, "Unknown")
 
 # Image Upload Screen
 def render_image_upload():
-    st.subheader(translations["upload_title"])
+    st.markdown(f'<p class="custom-text">{translations["upload_title"]}</p>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     with col1:
         uploaded_file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
