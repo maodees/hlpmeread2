@@ -18,9 +18,53 @@ def get_base64_image(image_path):
         st.error(f"Logo image not found at: {image_path}")
         return None
 
+HEADER_TRANSLATIONS = {
+    "zh-CN": {
+        "title": "收到看不懂的信件吗？",
+        "subtitle": "我们可以帮您翻译和解释信件内容，让您了解信件的含义和接下来该怎么做",
+        "prompt": "我想要理解我的信件内容：",
+        "continue": "继续 →",
+        "upload_title": "拍照或上传图片",  # Switched order
+        "upload_button": "上传图片",
+        "camera_button": "拍照"
+    },
+    "ms": {
+        "title": "Ada surat yang anda tidak faham?",
+        "subtitle": "Kami boleh menterjemah dan menerangkan surat anda supaya anda tahu maksudnya dan apa yang perlu dilakukan seterusnya",
+        "prompt": "Saya ingin memahami surat saya dalam:",
+        "continue": "Teruskan →",
+        "upload_title": "Ambil Gambar atau Muat Naik Imej",  # Switched order
+        "upload_button": "Muat Naik Imej",
+        "camera_button": "Ambil Gambar"
+    },
+    "ta": {
+        "title": "புரியாத கடிதம் உள்ளதா?",
+        "subtitle": "உங்கள் கடிதங்களை மொழிபெயர்த்து விளக்க முடியும், அதன் பொருளையும் அடுத்து என்ன செய்ய வேண்டும் என்பதையும் நீங்கள் அறிந்து கொள்ளலாம்",
+        "prompt": "என் கடிதங்களை புரிந்துகொள்ள விரும்புகிறேன்:",
+        "continue": "தொடரவும் →",
+        "upload_title": "புகைப்படம் எடுக்கவும் அல்லது படத்தை பதிவேற்றவும்",  # Switched order
+        "upload_button": "படத்தை பதிவேற்றவும்",
+        "camera_button": "புகைப்படம் எடுக்கவும்"
+    },
+    "en": {
+        "title": "Have a letter that you don't understand?",
+        "subtitle": "We can translate and explain your letters to you so you know what they mean and what to do next",
+        "prompt": "I want to understand my letters in:",
+        "continue": "Continue →",
+        "upload_title": "Take a Picture or Upload an Image",  # Switched order
+        "upload_button": "Upload Image",
+        "camera_button": "Take a Picture"
+    }
+}
+
+
 # Get base64 encoded logo (replace 'logo.png' with your actual filename)
-logo_b64 = get_base64_image("HMR_Logo.png")
+logo_b64 = get_base64_image("logo.svg")
 if logo_b64:
+    # Get the translations based on selected language, default to English
+    selected_lang = st.session_state.get('target_language', 'en')
+    translations = HEADER_TRANSLATIONS.get(selected_lang, HEADER_TRANSLATIONS['en'])
+
     st.markdown(f"""
         <style>
         .header-container {{
@@ -29,8 +73,8 @@ if logo_b64:
             align-items: center;
         }}
         .logo {{
-            width: 70px;
-            height: 70px;
+            width: 184px;
+            height: 55px;
             align-items: center;
         }}
         .header-text {{
@@ -41,11 +85,10 @@ if logo_b64:
         </style>
         
         <div class="header-container">
-            <img src="data:image/png;base64,{logo_b64}" class="logo">
-            <h1 class="header-text">HelpMeRead</h1>
+            <img src="data:image/svg+xml;base64,{logo_b64}" class="logo">
         </div>
-            <h5 class="header-text">Have a letter that you don’t understand?</h5>
-            <h6 class="header-text">We can translate and explain your letters to you so you know what they mean and what to do next.</h6>
+            <h5 class="header-text">{translations['title']}</h5>
+            <h6 class="header-text">{translations['subtitle']}</h6>
     """, unsafe_allow_html=True)
 else:
     st.header("Help Me Read")  # Fallback if logo fails to load
@@ -64,20 +107,7 @@ st.markdown("""
         display: flex;
         justify-content: center;
     }
-    div.stButton > button {
-        width: 100%;
-        height: 80px;
-        font-size: 24px;
-        color: #FFFFFF;
-        background-color: #007BFF;
-        border: none;
-        border-radius: 10px;
-        margin: 10px 0;
-        cursor: pointer;
-    }
-    div.stButton > button:hover {
-        background-color: #0056b3;
-    }
+
     .progress-container {
         width: 100%;
         background-color: #f0f2f6;
@@ -125,84 +155,111 @@ if "summary_text" not in st.session_state:
 if "translated_text" not in st.session_state:
     st.session_state.translated_text = ""
 
-# Language Selection Screen
 def render_language_selection():
+    # Initialize session state if not exists
+    if 'target_language' not in st.session_state:
+        st.session_state.target_language = None
+    # Get the translations based on selected language, default to English
+    selected_lang = st.session_state.get('target_language', 'en')
+    translations = HEADER_TRANSLATIONS.get(selected_lang, HEADER_TRANSLATIONS['en'])
 
+    # Your existing CSS styles remain the same
     st.markdown("""
-        <style>
-        /* Prevent horizontal blocks from wrapping and center their content */
-        [data-testid="stHorizontalBlock"] {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            justify-content: center !important;
-            gap: 0px !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
+    <style>
+    /* Your existing CSS styles */
+    /* Language Selection Button styles */
+    div[data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        justify-content: center !important;
+        gap: 15px !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        width: fit-content !important;
+    }
 
-        /* Force columns to be inline-block with fixed width */
-        [data-testid="stColumn"] {
-            display: inline-block !important;
-            width: 140px !important;      /* fixed width for each column */
-            min-width: 140px !important;
-            max-width: 140px !important;
-            vertical-align: top;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
+    div[data-testid="stHorizontalBlock"] .stButton > button {
+        width: 164px !important;
+        height: 80px !important;
+        padding: 16px !important;
+        border-radius: 8px !important;
+        border: 2px solid white !important;
+        background: transparent !important;
+        color: white !important;
+        font-size: 18px !important;
+        font-weight: bold !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2) !important;
+        transition: all 0.3s ease-in-out !important;
+    }
 
-        /* Remove default vertical spacing in vertical blocks */
-        [data-testid="stVerticalBlock"] > div {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
+    div[data-testid="stHorizontalBlock"] .stButton > button:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3) !important;
+    }
 
-        /* Remove spacing from the button container */
-        [data-testid="stButton"] {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
+    div[data-testid="stHorizontalBlock"] .stButton > button:focus {
+        background: #EAF3FF !important;
+        color: #1B8DFF !important;
+        border: 2px solid #1B8DFF !important;
+        font-weight: bold !important
+    }
 
-        /* Button styling */
-        .stButton > button {
-            width: 120px !important;      /* fixed small width for the button */
-            font-size: 12px;
-            padding: 2px 4px;
-            margin: 0 !important;
-        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-        .custom-text {
-        font-size: 20px;  /* Adjust the font size as needed */
-        text-align: center;
-        }        
-        </style>
-""", unsafe_allow_html=True)
-    st.markdown('<p class="custom-text">I want to understand my letters in: </p>', unsafe_allow_html=True)
-    # Adjust button size and arrange buttons in two rows
+     # Update the prompt text with translation
+    st.markdown(f'<p class="custom-text">{translations["prompt"]}</p>', unsafe_allow_html=True)
+
+    # Language selection buttons
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("中文", use_container_width=True):
+        if st.button("中文", key="language_zh", use_container_width=True):
             st.session_state.target_language = "zh-CN"
-            st.session_state.screen = "image_upload"
             st.rerun()
     with col2:
-        if st.button("Bahasa Melayu", use_container_width=True):
+        if st.button("Bahasa Melayu", key="language_ms", use_container_width=True):
             st.session_state.target_language = "ms"
-            st.session_state.screen = "image_upload"
             st.rerun()
 
     col3, col4 = st.columns(2)
     with col3:
-        if st.button("தமிழ்", use_container_width=True):
+        if st.button("தமிழ்", key="language_ta", use_container_width=True):
             st.session_state.target_language = "ta"
-            st.session_state.screen = "image_upload"
             st.rerun()
     with col4:
-        if st.button("English", use_container_width=True):
+        if st.button("English", key="language_en", use_container_width=True):
             st.session_state.target_language = "en"
-            st.session_state.screen = "image_upload"
             st.rerun()
-            
+
+    if st.session_state.target_language:
+        st.markdown("""
+            <style>
+            /* Larger Continue Button styles */
+            div.stButton > button:last-child {
+                width: 500px !important;  /* Increased width */
+                height: 80px !important;  /* Increased height */
+                justify-content: center !important;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+
+        # Center the continue button using columns
+        col1, col2, col3 = st.columns([1, 3, 1])
+        with col2:
+            if st.button(translations["continue"], key="continue_button"):
+                st.session_state.screen = "image_upload"
+                st.rerun()
+
+
+
 # Define a dictionary to map language codes to their native names
 LANGUAGE_MAP = {
     "zh-CN": "中文",
@@ -216,7 +273,7 @@ native_language = LANGUAGE_MAP.get(st.session_state.target_language, "Unknown")
 
 # Image Upload Screen
 def render_image_upload():
-    st.subheader("Upload an Image or Take a Picture")
+    st.subheader(translations["upload_title"])
     col1, col2 = st.columns(2)
     with col1:
         uploaded_file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
