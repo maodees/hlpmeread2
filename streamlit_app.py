@@ -9,15 +9,6 @@ import time
 import base64
 import streamlit.components.v1 as components
 
-# Function to convert image to base64
-def get_base64_image(image_path):
-    try:
-        with open(image_path, "rb") as image_file:
-            return base64.b64encode(image_file.read()).decode()
-    except FileNotFoundError:
-        st.error(f"Logo image not found at: {image_path}")
-        return None
-
 HEADER_TRANSLATIONS = {
     "zh-CN": {
         "title": "收到看不懂的信件吗？",
@@ -57,6 +48,14 @@ HEADER_TRANSLATIONS = {
     }
 }
 
+# Function to convert image to base64
+def get_base64_image(image_path):
+    try:
+        with open(image_path, "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode()
+    except FileNotFoundError:
+        st.error(f"Logo image not found at: {image_path}")
+        return None
 
 # Get base64 encoded logo (replace 'logo.png' with your actual filename)
 logo_b64 = get_base64_image("logo.svg")
@@ -165,8 +164,9 @@ def render_language_selection():
         /* Center all content */
         .block-container {
             max-width: 1000px !important;
-            padding-top: 2rem !important;
+            padding-top: 5rem !important;  /* This is the key line that shifts everything down */
             padding-bottom: 0rem !important;
+            margin-top: 1rem !important;   /* This also adds some additional spacing */
         }
 
         /* Force horizontal layout and center content */
@@ -221,31 +221,18 @@ def render_language_selection():
             transition: all 0.3s ease-in-out !important;
         }
 
-        /* Continue button styling */
-        .continue-button .stButton > button {
-            width: 343px !important;
-            height: 80px !important;
-            background: white !important;
-            color: #1B8DFF !important;
-            border: none !important;
-            border-radius: 8px !important;
-            font-size: 24px !important;
-            font-weight: bold !important;
-        }
-
+ 
         /* Hover effects */
         .stButton > button:hover {
             transform: scale(1.05) !important;
             box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3) !important;
         }
-
         .stButton > button:focus {
             background: #EAF3FF !important;
             color: #1B8DFF !important;
             border: 2px solid #1B8DFF !important;
             font-weight: bold !important;
         }
-
         /* Prompt text styling */
         .custom-text {
             font-size: 20px;
@@ -253,13 +240,6 @@ def render_language_selection():
             margin-bottom: 20px;
             color: white;
         }
-
-        /* Center continue button container */
-        .continue-button {
-            display: flex !important;
-            justify-content: center !important;
-            margin-top: 20px !important;
-            width: 100% !important;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -295,9 +275,6 @@ def render_language_selection():
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # Add minimal spacing between containers
-    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
-
     # Continue button container
     if st.session_state.target_language:
         with st.container():
@@ -324,7 +301,7 @@ def render_language_selection():
                 if st.button(translations["continue"], key="continue_button", use_container_width=True):
                     st.session_state.screen = "image_upload"
                     st.rerun()
-            
+
             st.markdown('</div>', unsafe_allow_html=True)
             
           
