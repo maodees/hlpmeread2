@@ -15,27 +15,37 @@ HEADER_TRANSLATIONS = {
         "subtitle": "我们可以帮您翻译和解释信件内容，让您了解信件的含义和接下来该怎么做",
         "prompt": "我想要理解我的信件内容：",
         "continue": "继续 →",
-        "upload_title": "拍照或上传图片",  # Switched order
+        "upload_title": "拍照或上传图片",  
         "upload_button": "上传图片",
-        "camera_button": "拍照"
+        "camera_button": "拍照",
+        "Processing": "处理中，请稍候。",
+        "Summary": "翻译主要内容",
+        "Retry": "再试"
     },
     "ms": {
         "title": "Ada surat yang anda tidak faham?",
         "subtitle": "Kami boleh menterjemah dan menerangkan surat anda supaya anda tahu maksudnya dan apa yang perlu dilakukan seterusnya",
         "prompt": "Saya ingin memahami surat saya dalam:",
         "continue": "Teruskan →",
-        "upload_title": "Ambil Gambar atau Muat Naik Imej",  # Switched order
+        "upload_title": "Ambil Gambar atau Muat Naik Imej",
         "upload_button": "Muat Naik Imej",
-        "camera_button": "Ambil Gambar"
+        "camera_button": "Ambil Gambar",
+        "Processing": "Memproses, Sila tunggu.",
+        "Summary": "Menterjemah isi utama",
+        "Retry": "Cuba lagi"
     },
     "ta": {
         "title": "புரியாத கடிதம் உள்ளதா?",
         "subtitle": "உங்கள் கடிதங்களை மொழிபெயர்த்து விளக்க முடியும், அதன் பொருளையும் அடுத்து என்ன செய்ய வேண்டும் என்பதையும் நீங்கள் அறிந்து கொள்ளலாம்",
         "prompt": "என் கடிதங்களை புரிந்துகொள்ள விரும்புகிறேன்:",
         "continue": "தொடரவும் →",
-        "upload_title": "புகைப்படம் எடுக்கவும் அல்லது படத்தை பதிவேற்றவும்",  # Switched order
+        "upload_title": "புகைப்படம் எடுக்கவும் அல்லது படத்தை பதிவேற்றவும்", 
         "upload_button": "படத்தை பதிவேற்றவும்",
-        "camera_button": "புகைப்படம் எடுக்கவும்"
+        "camera_button": "புகைப்படம் எடுக்கவும்",
+        "Processing": "செயலாக்கம் நடைபெறுகிறது, தயவுசெய்து காத்திருக்கவும்.",
+        "Summary": "முக்கிய உள்ளடக்கத்தை மொழிபெயர்க்கவும்",
+        "Retry": "மீண்டும் முயற்சிக்கவும்"
+
     },
     "en": {
         "title": "Have a letter that you don't understand?",
@@ -44,7 +54,10 @@ HEADER_TRANSLATIONS = {
         "continue": "Continue →",
         "upload_title": "Take a Picture or Upload an Image",  # Switched order
         "upload_button": "Upload Image",
-        "camera_button": "Take a Picture"
+        "camera_button": "Take a Picture",
+        "Processing": "Processing, Please wait.",
+        "Summary": "Translated Summary",
+        "Retry": "Try Again"
     }
 }
 
@@ -86,8 +99,7 @@ if logo_b64:
         <div class="header-container">
             <img src="data:image/svg+xml;base64,{logo_b64}" class="logo">
         </div>
-            <h5 class="header-text">{translations['title']}</h5>
-            <h6 class="header-text">{translations['subtitle']}</h6>
+        
     """, unsafe_allow_html=True)
 else:
     st.header("Help Me Read")  # Fallback if logo fails to load
@@ -115,20 +127,7 @@ st.markdown("""
         position: relative;
         overflow: hidden;
     }
-    .progress-bar {
-        width: 0%;
-        height: 20px;
-        background-color: #2575fc;
-        border-radius: 8px;
-        transition: width 0.5s ease;
-    }
-    .progress-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: black;
-        font-weight: bold;
+
     }
     .text-container {
         padding: 1rem;
@@ -158,6 +157,9 @@ def render_language_selection():
     # Get translations
     selected_lang = st.session_state.get('target_language', 'en')
     translations = HEADER_TRANSLATIONS.get(selected_lang, HEADER_TRANSLATIONS['en'])
+
+    st.markdown(f'<h5 style="text-align:center; color: white;">{translations["title"]}</h5>', unsafe_allow_html=True)
+    st.markdown(f'<h6 style="text-align:center; color: white;">{translations["subtitle"]}</h6>', unsafe_allow_html=True)
 
     st.markdown("""
         <style>
@@ -316,29 +318,56 @@ LANGUAGE_MAP = {
 # Fetch the native language name from the dictionary
 native_language = LANGUAGE_MAP.get(st.session_state.target_language, "Unknown")
 
-# Image Upload Screen
+# Image Upload Screen 
 def render_image_upload():
     st.markdown(f'<p class="custom-text">{translations["upload_title"]}</p>', unsafe_allow_html=True)
+
+    # Initialize session state for the selected option
+    if 'upload_option' not in st.session_state:
+        st.session_state.upload_option = None  # Options: "upload", "camera", or None
+
+    # Add buttons to select the upload option
     col1, col2 = st.columns(2)
     with col1:
-        uploaded_file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
-        if uploaded_file:
-            st.session_state.uploaded_file = uploaded_file
-            st.session_state.screen = "processing"
-            st.rerun()
+        if st.button("Upload Image"):
+            st.session_state.upload_option = "upload"
+            st.session_state.screen = "upload_screen"  # Switch to the upload screen
+            st.rerun()  # Force a rerun to switch screens
     with col2:
-        camera_file = st.camera_input("Take a Picture")
-        if camera_file:
-            st.session_state.uploaded_file = camera_file
-            st.session_state.screen = "processing"
-            st.rerun()
+        if st.button("Take a Picture"):
+            st.session_state.upload_option = "camera"
+            st.session_state.screen = "camera_screen"  # Switch to the camera screen
+            st.rerun()  # Force a rerun to switch screens
+
+    # Render the appropriate screen based on the selected option
+    if st.session_state.get("screen") == "upload_screen":
+        render_upload_screen()
+    elif st.session_state.get("screen") == "camera_screen":
+        render_camera_screen()
+
+def render_upload_screen():
+    st.markdown(f'<p class="custom-text">Upload an Image</p>', unsafe_allow_html=True)
+    uploaded_file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"], label_visibility="collapsed", key="uploader")
+    if uploaded_file:
+        st.session_state.uploaded_file = uploaded_file
+        st.session_state.screen = "processing"
+        st.session_state.upload_option = None  # Reset the option
+        st.rerun()  # Force a rerun to clear the UI
+
+def render_camera_screen():
+    st.markdown(f'<p class="custom-text">Take a Picture</p>', unsafe_allow_html=True)
+    camera_file = st.camera_input("Take a Picture", key="camera")
+    if camera_file:
+        st.session_state.uploaded_file = camera_file
+        st.session_state.screen = "processing"
+        st.session_state.upload_option = None  # Reset the option
+        st.rerun()  # Force a rerun to clear the UI
+
 
 # Processing Screen
 def render_processing():
-    st.markdown(
-    "<h5 style='text-align: center; color: white;'>Please wait a moment for processing to complete.</h5>",
-    unsafe_allow_html=True
-)
+
+    st.markdown(f'<h5 style="text-align: center; color: white;">{translations["Processing"]}</h5>', unsafe_allow_html=True)
 
     # Create an empty placeholder for the progress bar
     progress_placeholder = st.empty()
@@ -436,7 +465,8 @@ def render_processing():
 # Results Screen
 def render_results():
 
-    st.subheader(f"Translated Text ({native_language}):")
+    #st.subheader(f"{translations['Summary']}:")
+    st.markdown(f'<h6 style="text-align: left; color: white;">{translations["Summary"]} :</h6>', unsafe_allow_html=True)
     st.markdown(f"<div class='text-container'>{st.session_state.translated_text}</div>", unsafe_allow_html=True)
     #st.download_button("Download Translation", st.session_state.translated_text, file_name="translation.txt", mime="text/plain")
 
@@ -487,24 +517,76 @@ def render_results():
         <button onclick="playAgain()" style="
             display: block;
             width: 100%;
-            padding: 15px;
+            padding: 25px;
             font-size: 18px;
             background-color: #007BFF;
             color: white;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            margin-top: 10px;">
-        🔊 Play Again
+            margin-top: 25px;">
+        🔊 
         </button>
     </body>
     </html>
     """
+    components.html(html_code, height=100)
 
-    components.html(html_code, height=80)
+# Display the Restart button only at the end of the process
+    #st.button("Restart", on_click=lambda: st.session_state.update({"screen": "image_upload", "uploaded_file": None}))
 
-    # Restart Button
-    st.button("Restart", on_click=lambda: st.session_state.update({"screen": "image_upload", "uploaded_file": None}))
+    # Continue button container
+    if st.session_state.target_language:
+        with st.container():
+            st.markdown("""
+                <style>
+
+                /* Language button styling */
+                .stButton > button {
+                    width: 100% !important;
+                    height: 80px !important;
+                    padding: 16px !important;
+                    border-radius: 8px !important;
+                    border: 2px solid white !important;
+                    background: transparent !important;
+                    color: white !important;
+                    font-size: 18px !important;
+                    font-weight: bold !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    white-space: nowrap !important;
+                    overflow: hidden !important;
+                    text-overflow: ellipsis !important;
+                    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2) !important;
+                    transition: all 0.3s ease-in-out !important;
+                }
+
+                .stButton > button:focus {
+                    background: #EAF3FF !important;
+                    color: #1B8DFF !important;
+                    border: 2px solid #1B8DFF !important;
+                    font-weight: bold !important;
+                }
+                /* Prompt text styling */
+                .custom-text {
+                    font-size: 20px;
+                    text-align: center;
+                    margin-bottom: 20px;
+                    color: white;
+                }
+                }
+                </style>
+            """, unsafe_allow_html=True)
+            
+            # Center the continue button using columns
+            col1, col2, col3 = st.columns([1, 1, 1])
+            with st.container():
+                if st.button(translations["Retry"], key="button-container", use_container_width=True):
+                    st.session_state.screen = "image_upload"
+                    st.rerun()
+
+            st.markdown('</div>', unsafe_allow_html=True)
 
     # Hide extracted text and summary in an expander
     with st.expander("Show Extracted Text and Summary"):
@@ -515,33 +597,51 @@ def render_results():
         st.markdown(f"<div class='text-container'>{st.session_state.summary_text}</div>", unsafe_allow_html=True)
  
 
-# Render the appropriate screen
-if st.session_state.screen == "language_selection":
-    render_language_selection()
-elif st.session_state.screen == "image_upload":
-    render_image_upload()
-elif st.session_state.screen == "processing":
-    render_processing()
-elif st.session_state.screen == "results":
-    render_results()
+# Main function
+def main():
+    # Initialize session state for screen management
+    if 'screen' not in st.session_state:
+        st.session_state.screen = "language_selection"
 
+    # Render the appropriate screen
+    if st.session_state.screen == "language_selection":
+        render_language_selection()
+    elif st.session_state.screen == "image_upload":
+        render_image_upload()
+    elif st.session_state.screen == "upload_screen":  # New screen for uploading an image
+        render_upload_screen()
+    elif st.session_state.screen == "camera_screen":  # New screen for taking a picture
+        render_camera_screen()
+    elif st.session_state.screen == "processing":
+        render_processing()
+    elif st.session_state.screen == "results":
+        render_results()
 
-
+if __name__ == "__main__":
+    main()
 
 #----------Change log-------------
-#22 Feb:(RK)
-#Change general UI based on mockup
+#4 Mar: (RK)
+#Added translations for the labels across.
 
-#24 Feb:(RK)
-#Change to 4 screens. Select Lang-> Upload/Cam -> Process -> Results
-#Add restart button on the results screen.
+#3 Mar: (RK)
+#Added language selection as first step, then continue button to reduce issue of selecting wrong language at first.
+
+#2 Mar:(RK)
+#Enable auto play of audio once translation is completed.
+#Change to large play audio again button.
+
+#28 Feb: (RK)
+#Re-arranged 1st screen language buttons
+#Hide extracted text and summary at the bottom of the last screen(For testing purpose)
 
 #25 Feb:(RK)
 #Include a progress bar with percentage value in Process screen
 #Add logo on the front page
 
-#28 Feb: (RK)
-#Re-arranged 1st screen language buttons
-#Enable auto play of audio once translation is completed.
-#Change to large play audio again button.
-#Hide extracted text and summary at the bottom of the last screen(For testing purpose)
+#24 Feb:(RK)
+#Change to 4 screens. Select Lang-> Upload/Cam -> Process -> Results
+#Add restart button on the results screen.
+
+#22 Feb:(RK)
+#Change general UI based on mockup
