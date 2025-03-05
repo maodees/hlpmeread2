@@ -578,28 +578,15 @@ def render_results():
         st.markdown(f"<div class='text-container'>{st.session_state.summary_text}</div>", unsafe_allow_html=True)
  
 
-# Main function
-def main():
-    # Initialize session state for screen management
-    if 'screen' not in st.session_state:
-        st.session_state.screen = "language_selection"
-
-    # Render the appropriate screen
-    if st.session_state.screen == "language_selection":
-        render_language_selection()
-    elif st.session_state.screen == "image_upload":
-        render_image_upload()
-    elif st.session_state.screen == "upload_screen":  # New screen for uploading an image
-        render_upload_screen()
-    elif st.session_state.screen == "camera_screen":  # New screen for taking a picture
-        render_camera_screen()
-    elif st.session_state.screen == "processing":
-        render_processing()
-    elif st.session_state.screen == "results":
-        render_results()
-
-if __name__ == "__main__":
-    main()
+# Render the appropriate screen
+if st.session_state.screen == "language_selection":
+    render_language_selection()
+elif st.session_state.screen == "image_upload":
+    render_image_upload()
+elif st.session_state.screen == "processing":
+    render_processing()
+elif st.session_state.screen == "results":
+    render_results()
 
 #----------Change log-------------
 #4 Mar: (RK)
