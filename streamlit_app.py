@@ -318,41 +318,22 @@ LANGUAGE_MAP = {
 # Fetch the native language name from the dictionary
 native_language = LANGUAGE_MAP.get(st.session_state.target_language, "Unknown")
 
-# Image Upload Screen 
+# Image Upload Screen
 def render_image_upload():
     st.markdown(f'<p class="custom-text">{translations["upload_title"]}</p>', unsafe_allow_html=True)
-
-    # Initialize session state for the selected option
-    if 'upload_option' not in st.session_state:
-        st.session_state.upload_option = None  # Options: "upload", "camera", or None
-
-    # Add buttons to select the upload option
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("Upload Image"):
-            st.session_state.upload_option = "upload"
-            st.session_state.screen = "upload_screen"  # Switch to the upload screen
-            st.rerun()  # Force a rerun to switch screens
+        uploaded_file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
+        if uploaded_file:
+            st.session_state.uploaded_file = uploaded_file
+            st.session_state.screen = "processing"
+            st.rerun()
     with col2:
-        if st.button("Take a Picture"):
-            st.session_state.upload_option = "camera"
-            st.session_state.screen = "camera_screen"  # Switch to the camera screen
-            st.rerun()  # Force a rerun to switch screens
-
-    # Render the appropriate screen based on the selected option
-    if st.session_state.get("screen") == "upload_screen":
-        render_upload_screen()
-    elif st.session_state.get("screen") == "camera_screen":
-        render_camera_screen()
-
-def render_upload_screen():
-    st.markdown(f'<p class="custom-text">Upload an Image</p>', unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"], label_visibility="collapsed", key="uploader")
-    if uploaded_file:
-        st.session_state.uploaded_file = uploaded_file
-        st.session_state.screen = "processing"
-        st.session_state.upload_option = None  # Reset the option
-        st.rerun()  # Force a rerun to clear the UI
+        camera_file = st.camera_input("Take a Picture")
+        if camera_file:
+            st.session_state.uploaded_file = camera_file
+            st.session_state.screen = "processing"
+            st.rerun()
 
 def render_camera_screen():
     st.markdown(f'<p class="custom-text">Take a Picture</p>', unsafe_allow_html=True)
