@@ -420,7 +420,7 @@ def render_processing():
     update_progress(25, "Processing...")
 
     # Step 2: Summarization
-    summarizer = pipeline("summarization", model="facebook/bart-large-cnn", device=-1)  # Force CPU only
+    summarizer = pipeline("summarization", model="facebook/bart-large-cnn")  # Force CPU only
     st.session_state.summary_text = summarizer(
         st.session_state.extracted_text, max_length=150, min_length=50, do_sample=False
     )[0]["summary_text"]
