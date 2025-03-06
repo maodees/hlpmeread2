@@ -8,6 +8,7 @@ from deep_translator import GoogleTranslator
 import time
 import base64
 import streamlit.components.v1 as components
+import torch
 
 HEADER_TRANSLATIONS = {
     "zh-CN": {
@@ -328,21 +329,12 @@ def render_image_upload():
             st.session_state.uploaded_file = uploaded_file
             st.session_state.screen = "processing"
             st.rerun()
-    with col2:
-        camera_file = st.camera_input("Take a Picture")
-        if camera_file:
-            st.session_state.uploaded_file = camera_file
-            st.session_state.screen = "processing"
-            st.rerun()
-
-def render_camera_screen():
-    st.markdown(f'<p class="custom-text">Take a Picture</p>', unsafe_allow_html=True)
-    camera_file = st.camera_input("Take a Picture", key="camera")
-    if camera_file:
-        st.session_state.uploaded_file = camera_file
-        st.session_state.screen = "processing"
-        st.session_state.upload_option = None  # Reset the option
-        st.rerun()  # Force a rerun to clear the UI
+    #with col2:
+    #    camera_file = st.camera_input("Take a Picture")
+    #    if camera_file:
+    #        st.session_state.uploaded_file = camera_file
+    #        st.session_state.screen = "processing"
+    #        st.rerun()
 
 
 # Processing Screen
@@ -413,17 +405,17 @@ def render_processing():
     # Step 1: OCR Processing
     image = Image.open(st.session_state.uploaded_file)
     img_array = np.array(image)
-    reader = easyocr.Reader(['en'])
+    #reader = easyocr.Reader(['en'])
+    reader = easyocr.Reader(['en'], gpu=torch.cuda.is_available()) #TAP on GPU
     results = reader.readtext(img_array)
     st.session_state.extracted_text = "\n".join([res[1] for res in results])
 
     update_progress(25, "Processing...")
 
     # Step 2: Summarization
-    summarizer = pipeline("summarization", model="facebook/bart-large-cnn")  # Force CPU only
-    st.session_state.summary_text = summarizer(
-        st.session_state.extracted_text, max_length=150, min_length=50, do_sample=False
-    )[0]["summary_text"]
+    #summarizer = pipeline("summarization", model="facebook/bart-large-cnn")  # Force CPU only
+    summarizer = pipeline("summarization", model="facebook/bart-large-cnn", device=0 if torch.cuda.is_available() else -1) #TAP ON GPU
+    st.session_state.summary_text = summarizer(st.session_state.extracted_text, max_length=150, min_length=50, do_sample=False)[0]["summary_text"]
 
     update_progress(70, "Summarizing...")
 
@@ -564,7 +556,7 @@ def render_results():
             col1, col2, col3 = st.columns([1, 1, 1])
             with st.container():
                 if st.button(translations["Retry"], key="button-container", use_container_width=True):
-                    st.session_state.screen = "image_upload"
+                    st.session_state.screen = "language_selection"
                     st.rerun()
 
             st.markdown('</div>', unsafe_allow_html=True)
@@ -589,6 +581,10 @@ elif st.session_state.screen == "results":
     render_results()
 
 #----------Change log-------------
+#6 Mar:(RK)
+#Change OCR and Summarizer to tap on GPU
+#Change retry button route to main menu.
+
 #4 Mar: (RK)
 #Added translations for the labels across.
 
