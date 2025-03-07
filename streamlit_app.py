@@ -1,21 +1,21 @@
 import streamlit as st
-from paddleocr import PaddleOCR, draw_ocr
+from paddleocr import PaddleOCR
 from PIL import Image
 import io
 
 # Initialize the PaddleOCR model
-ocr = PaddleOCR(use_angle_cls=True, lang='en')  # Use `en` for English. You can change to other languages like `ch` for Chinese.
+ocr = PaddleOCR(use_angle_cls=True, lang='en')  # Use `en` for English. Change language code if needed.
 
 st.title("OCR with PaddleOCR")
 
-# File uploader
+# File uploader to upload an image
 uploaded_file = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
 
 if uploaded_file is not None:
     # Open the image using PIL
     image = Image.open(uploaded_file)
     
-    # Convert the image to a format compatible with PaddleOCR
+    # Convert the uploaded image to a format compatible with PaddleOCR
     image_path = "uploaded_image.jpg"
     image.save(image_path)
 
