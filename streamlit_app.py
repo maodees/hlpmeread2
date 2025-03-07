@@ -136,11 +136,11 @@ st.markdown("""
 
     }
     .text-container {
-        padding: 1rem;
-        background-color: white;
-        border-radius: 10px;
-        margin: 1rem 0;
-        color: black;
+        padding: 1rem !Important;
+        background-color: white !Important; 
+        border-radius: 10px !Important;
+        margin: 1rem 0 !Important;
+        color: black !Important;
     }            
     </style>
 """, unsafe_allow_html=True)
