@@ -8,4 +8,4 @@ validators
 streamlit-js-eval
 opencv-python
 numpy
-streamlit-webrtc
+pyzbar
