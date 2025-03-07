@@ -6,3 +6,5 @@ transformers
 deep_translator
 validators
 streamlit-js-eval
+opencv-python
+numpy
