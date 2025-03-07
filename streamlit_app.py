@@ -1,22 +1,34 @@
 import streamlit as st
 import cv2
 import numpy as np
+from streamlit_webrtc import VideoProcessorBase, webrtc_streamer
 
-st.title("QR Code Scanner 📷")
+class VideoProcessor(VideoProcessorBase):
+    def __init__(self):
+        self.detector = cv2.QRCodeDetector()
+    
+    def recv(self, frame):
+        # Convert the frame to numpy array for processing
+        img = frame.to_ndarray(format="bgr24")
+        
+        # Convert to grayscale for better detection
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        
+        # Detect and decode QR code
+        data, bbox, _ = self.detector.detectAndDecode(gray)
+        
+        if data:
+            # Draw bounding box around QR code
+            if bbox is not None:
+                n = len(bbox)
+                for j in range(n):
+                    cv2.line(img, tuple(bbox[j][0]), tuple(bbox[(j + 1) % n][0]), (0, 255, 0), 3)
+            
+            # Display QR code text on the frame
+            cv2.putText(img, data, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+        
+        return frame
 
-uploaded_file = st.file_uploader("Upload a QR Code Image", type=["png", "jpg", "jpeg"])
+st.title("Real-Time QR Code Scanner with Webcam")
 
-if uploaded_file is not None:
-    # Convert to OpenCV format
-    file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
-    img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-
-    # QR Code Detector
-    detector = cv2.QRCodeDetector()
-    data, bbox, _ = detector.detectAndDecode(img)
-
-    if data:
-        st.success(f"Decoded QR Code: {data}")
-    else:
-        st.error("No QR code detected. Try another image.")
-
+webrtc_streamer(key="example", video_processor_factory=VideoProcessor)
