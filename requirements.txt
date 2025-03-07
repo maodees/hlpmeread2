@@ -8,3 +8,5 @@ validators
 streamlit-js-eval
 opencv-python
 numpy
+pyzbar
+qrtools
