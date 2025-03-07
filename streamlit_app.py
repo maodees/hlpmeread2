@@ -1,22 +1,35 @@
 import streamlit as st
-import cv2
-import numpy as np
-from pyzbar.pyzbar import decode
+from paddleocr import PaddleOCR, draw_ocr
+from PIL import Image
+import io
 
-st.title("QR Code Scanner from Image")
+# Initialize the PaddleOCR model
+ocr = PaddleOCR(use_angle_cls=True, lang='en')  # Use `en` for English. You can change to other languages like `ch` for Chinese.
 
-uploaded_file = st.file_uploader("Upload a QR Code Image", type=["png", "jpg", "jpeg"])
+st.title("OCR with PaddleOCR")
+
+# File uploader
+uploaded_file = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
 
 if uploaded_file is not None:
-    # Convert to OpenCV format
-    file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
-    img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+    # Open the image using PIL
+    image = Image.open(uploaded_file)
+    
+    # Convert the image to a format compatible with PaddleOCR
+    image_path = "uploaded_image.jpg"
+    image.save(image_path)
 
-    # Decode QR code using pyzbar
-    decoded_objects = decode(img)
+    # Perform OCR using PaddleOCR
+    result = ocr.ocr(image_path, cls=True)
 
-    if decoded_objects:
-        for obj in decoded_objects:
-            st.success(f"Decoded QR Code: {obj.data.decode('utf-8')}")
+    # Display the image with OCR results
+    st.image(image, caption="Uploaded Image", use_column_width=True)
+    
+    # Extract and display the text from the result
+    extracted_text = "\n".join([line[1][0] for line in result[0]])
+
+    if extracted_text:
+        st.success("Extracted Text:")
+        st.write(extracted_text)
     else:
-        st.error("No QR code detected.")
+        st.warning("No text detected in the image.")
