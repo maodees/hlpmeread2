@@ -212,6 +212,8 @@ def render_language_selection():
 
         /* Language button styling */
         .stButton > button {
+            -webkit-tap-highlight-color: transparent !important;
+            touch-action: manipulation !important;
             width: 164px !important;
             height: 80px !important;
             padding: 16px !important;
@@ -237,19 +239,15 @@ def render_language_selection():
             transform: scale(1.05) !important;
             box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3) !important;
         }
-        .stButton > button:focus {
+        .stButton > button:focus,
+        .stButton > button:focus-visible,
+        .stButton > button:active {
             background: #EAF3FF !important;
             color: #1B8DFF !important;
             border: 2px solid #1B8DFF !important;
             font-weight: bold !important;
-        }
-        /* Prompt text styling */
-        .custom-text {
-            font-size: 38px !important
-            text-align: center;
-            margin-bottom: 20px;
-            color: white;
-        }
+            outline: none !important;
+        }     
         }
         </style>
     """, unsafe_allow_html=True)
@@ -331,7 +329,9 @@ native_language = LANGUAGE_MAP.get(st.session_state.target_language, "Unknown")
 
 # Image Upload Screen
 def render_image_upload():
-    st.markdown(f'<p class="custom-text">{translations["upload_title"]}</p>', unsafe_allow_html=True)
+   
+    #st.markdown(f'<p class="custom-text">{translations["upload_title"]}</p>', unsafe_allow_html=True)
+    st.markdown(f'<h6 style="text-align:center; color: white; font-size: 22px">{translations["upload_title"]}</h6>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     with col1:
         uploaded_file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
