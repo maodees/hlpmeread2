@@ -1,6 +1,6 @@
 import streamlit as st
-import easyocr
 import numpy as np
+import easyocr
 from gtts import gTTS
 from PIL import Image
 from transformers import pipeline
@@ -9,6 +9,7 @@ import time
 import base64
 import streamlit.components.v1 as components
 import torch
+import cv2
 
 HEADER_TRANSLATIONS = {
     "zh-CN": {
@@ -137,6 +138,15 @@ st.markdown("""
         margin: 1rem 0;
         color: black;
     }
+
+    /* Prompt text styling */
+    .custom-text {
+         font-size: 5px;
+         text-align: center;
+         margin-bottom: 20px;
+         color: white;
+        }
+            
     </style>
 """, unsafe_allow_html=True)
 
@@ -155,11 +165,13 @@ if "translated_text" not in st.session_state:
     st.session_state.translated_text = ""
 
 def render_language_selection():
+
     # Get translations
     selected_lang = st.session_state.get('target_language', 'en')
     translations = HEADER_TRANSLATIONS.get(selected_lang, HEADER_TRANSLATIONS['en'])
 
-    st.markdown(f'<h5 style="text-align:center; color: white;">{translations["title"]}</h5>', unsafe_allow_html=True)
+    #st.markdown(f'<h5 style="text-align:center; color: white;">{translations["title"]}</h5>', unsafe_allow_html=True)
+    st.markdown(f'<h5 style="text-align:center; color: white; font-size: 24px;">{translations["title"]}</h5>', unsafe_allow_html=True)
     st.markdown(f'<h6 style="text-align:center; color: white;">{translations["subtitle"]}</h6>', unsafe_allow_html=True)
 
     st.markdown("""
@@ -238,7 +250,7 @@ def render_language_selection():
         }
         /* Prompt text styling */
         .custom-text {
-            font-size: 20px;
+            font-size: 38px !important
             text-align: center;
             margin-bottom: 20px;
             color: white;
@@ -403,12 +415,56 @@ def render_processing():
     update_progress(15, "Initializing...")
 
     # Step 1: OCR Processing
+    #image = Image.open(st.session_state.uploaded_file)
+    #img_array = np.array(image)
+    #reader = easyocr.Reader(['en'], gpu=torch.cuda.is_available()) #TAP on GPU
+    #results = reader.readtext(img_array)
+    #st.session_state.extracted_text = "\n".join([res[1] for res in results])
+
+        # Ensure file is uploaded
+    if 'uploaded_file' not in st.session_state or st.session_state.uploaded_file is None:
+        st.warning("Please upload an image first.")
+        return ""
+
+    # Load image
     image = Image.open(st.session_state.uploaded_file)
     img_array = np.array(image)
-    #reader = easyocr.Reader(['en'])
-    reader = easyocr.Reader(['en'], gpu=torch.cuda.is_available()) #TAP on GPU
-    results = reader.readtext(img_array)
-    st.session_state.extracted_text = "\n".join([res[1] for res in results])
+
+    # Convert to grayscale
+    gray = cv2.cvtColor(img_array, cv2.COLOR_BGR2GRAY)
+
+    # Apply adaptive thresholding (binarization)
+    processed_img = cv2.adaptiveThreshold(
+        gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
+    )
+
+    # Resize image for better readability if it's too small
+    height, width = processed_img.shape
+    if width < 800:
+        scale_factor = 2
+        processed_img = cv2.resize(
+            processed_img, (width * scale_factor, height * scale_factor), interpolation=cv2.INTER_LINEAR
+        )
+
+    # Remove noise using Gaussian Blur
+    processed_img = cv2.GaussianBlur(processed_img, (3, 3), 0)
+
+    # Initialize EasyOCR Reader
+    reader = easyocr.Reader(['en'], gpu=torch.cuda.is_available())
+
+    # Run OCR with optimized settings
+    results = reader.readtext(
+        processed_img,
+        detail=0,          # Get only text, not bounding boxes
+        paragraph=True,    # Group text into paragraphs
+        contrast_ths=0.5,  # Improve recognition on low-contrast images
+        adjust_contrast=0.7,  # Increase contrast
+        add_margin=0.1    # Add some padding around text
+    )
+
+    # Store extracted text in session state
+    extracted_text = "\n".join(results)
+    st.session_state.extracted_text = extracted_text
 
     update_progress(25, "Processing...")
 
