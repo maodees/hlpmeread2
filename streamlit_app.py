@@ -212,8 +212,9 @@ def render_language_selection():
 
         /* Language button styling */
         .stButton > button {
-            -webkit-tap-highlight-color: transparent !important;
-            touch-action: manipulation !important;
+            -webkit-appearance: none !important;
+            -webkit-touch-callout: none !important;
+            -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
             width: 164px !important;
             height: 80px !important;
             padding: 16px !important;
@@ -413,56 +414,51 @@ def render_processing():
     update_progress(15, "Initializing...")
 
     # Step 1: OCR Processing
-    #image = Image.open(st.session_state.uploaded_file)
-    #img_array = np.array(image)
-    #reader = easyocr.Reader(['en'], gpu=torch.cuda.is_available()) #TAP on GPU
-    #results = reader.readtext(img_array)
-    #st.session_state.extracted_text = "\n".join([res[1] for res in results])
-
-        # Ensure file is uploaded
-    if 'uploaded_file' not in st.session_state or st.session_state.uploaded_file is None:
-        st.warning("Please upload an image first.")
-        return ""
-
-    # Load image
     image = Image.open(st.session_state.uploaded_file)
     img_array = np.array(image)
+    reader = easyocr.Reader(['en'], gpu=torch.cuda.is_available()) #TAP on GPU
+    results = reader.readtext(img_array)
+    st.session_state.extracted_text = "\n".join([res[1] for res in results])
+
+    # Load image
+    #image = Image.open(st.session_state.uploaded_file)
+    #img_array = np.array(image)
 
     # Convert to grayscale
-    gray = cv2.cvtColor(img_array, cv2.COLOR_BGR2GRAY)
+    #gray = cv2.cvtColor(img_array, cv2.COLOR_BGR2GRAY)
 
     # Apply adaptive thresholding (binarization)
-    processed_img = cv2.adaptiveThreshold(
-        gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
-    )
+    #processed_img = cv2.adaptiveThreshold(
+    #    gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
+    #)
 
     # Resize image for better readability if it's too small
-    height, width = processed_img.shape
-    if width < 800:
-        scale_factor = 2
-        processed_img = cv2.resize(
-            processed_img, (width * scale_factor, height * scale_factor), interpolation=cv2.INTER_LINEAR
-        )
+    #height, width = processed_img.shape
+    #if width < 800:
+    #    scale_factor = 2
+    #    processed_img = cv2.resize(
+    #        processed_img, (width * scale_factor, height * scale_factor), interpolation=cv2.INTER_LINEAR
+    #    )
 
     # Remove noise using Gaussian Blur
-    processed_img = cv2.GaussianBlur(processed_img, (3, 3), 0)
+    #processed_img = cv2.GaussianBlur(processed_img, (3, 3), 0)
 
     # Initialize EasyOCR Reader
-    reader = easyocr.Reader(['en'], gpu=torch.cuda.is_available())
+    #reader = easyocr.Reader(['en'], gpu=torch.cuda.is_available())
 
     # Run OCR with optimized settings
-    results = reader.readtext(
-        processed_img,
-        detail=0,          # Get only text, not bounding boxes
-        paragraph=True,    # Group text into paragraphs
-        contrast_ths=0.5,  # Improve recognition on low-contrast images
-        adjust_contrast=0.7,  # Increase contrast
-        add_margin=0.1    # Add some padding around text
-    )
+    #results = reader.readtext(
+    #    processed_img,
+    #    detail=0,          # Get only text, not bounding boxes
+    #    paragraph=True,    # Group text into paragraphs
+    #    contrast_ths=0.5,  # Improve recognition on low-contrast images
+    #    adjust_contrast=0.7,  # Increase contrast
+    #    add_margin=0.1    # Add some padding around text
+    #)
 
     # Store extracted text in session state
-    extracted_text = "\n".join(results)
-    st.session_state.extracted_text = extracted_text
+    #extracted_text = "\n".join(results)
+    #st.session_state.extracted_text = extracted_text
 
     update_progress(25, "Processing...")
 
