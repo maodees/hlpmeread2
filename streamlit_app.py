@@ -14,9 +14,10 @@ import cv2
 HEADER_TRANSLATIONS = {
     "zh-CN": {
         "title": "收到看不懂的信件吗？",
-        "subtitle": "我们可以帮您翻译和解释信件内容，让您了解信件的含义和接下来该怎么做",
-        "prompt": "我想要理解我的信件内容：",
+        "subtitle": "我们帮助您翻译和解释",
+        "prompt": "用以下语言解释：",
         "continue": "继续 →",
+        "disclaimer": "系统不会存储任何个人数据或信件",
         "upload_title": "拍照或上传图片",  
         "upload_button": "上传图片",
         "camera_button": "拍照",
@@ -26,9 +27,10 @@ HEADER_TRANSLATIONS = {
     },
     "ms": {
         "title": "Ada surat yang anda tidak faham?",
-        "subtitle": "Kami boleh menterjemah dan menerangkan surat anda supaya anda tahu maksudnya dan apa yang perlu dilakukan seterusnya",
-        "prompt": "Saya ingin memahami surat saya dalam:",
+        "subtitle": "Kami membantu untuk menterjemah dan menerangkannya kepada anda",
+        "prompt": "Terangkan surat saya dalam:",
         "continue": "Teruskan →",
+        "disclaimer": "Sistem Tiada data peribadi atau surat akan disimpan",
         "upload_title": "Ambil Gambar atau Muat Naik Imej",
         "upload_button": "Muat Naik Imej",
         "camera_button": "Ambil Gambar",
@@ -38,9 +40,10 @@ HEADER_TRANSLATIONS = {
     },
     "ta": {
         "title": "புரியாத கடிதம் உள்ளதா?",
-        "subtitle": "உங்கள் கடிதங்களை மொழிபெயர்த்து விளக்க முடியும், அதன் பொருளையும் அடுத்து என்ன செய்ய வேண்டும் என்பதையும் நீங்கள் அறிந்து கொள்ளலாம்",
-        "prompt": "என் கடிதங்களை புரிந்துகொள்ள விரும்புகிறேன்:",
+        "subtitle": "அதை உங்களுக்கு மொழிபெயர்க்கவும் விளக்கவும் நாங்கள் உதவுகிறோம்.",
+        "prompt": "எனது கடிதத்தை விளக்கவும்",
         "continue": "தொடரவும் →",
+        "disclaimer": "அமைப்பு தனிப்பட்ட தரவு அல்லது கடிதங்கள் எதுவும் சேமிக்கப்படாது.",
         "upload_title": "புகைப்படம் எடுக்கவும் அல்லது படத்தை பதிவேற்றவும்", 
         "upload_button": "படத்தை பதிவேற்றவும்",
         "camera_button": "புகைப்படம் எடுக்கவும்",
@@ -51,9 +54,10 @@ HEADER_TRANSLATIONS = {
     },
     "en": {
         "title": "Have a letter that you don't understand?",
-        "subtitle": "We can translate and explain your letters to you so you know what they mean and what to do next",
-        "prompt": "I want to understand my letters in:",
+        "subtitle": "We help to translate and explain it to you",
+        "prompt": "Explain my letter in:",
         "continue": "Continue →",
+        "disclaimer": "No personal data or letters will be stored",
         "upload_title": "Take a Picture or Upload an Image",  # Switched order
         "upload_button": "Upload Image",
         "camera_button": "Take a Picture",
@@ -137,16 +141,7 @@ st.markdown("""
         border-radius: 10px;
         margin: 1rem 0;
         color: black;
-    }
-
-    /* Prompt text styling */
-    .custom-text {
-         font-size: 5px;
-         text-align: center;
-         margin-bottom: 20px;
-         color: white;
-        }
-            
+    }            
     </style>
 """, unsafe_allow_html=True)
 
@@ -171,8 +166,8 @@ def render_language_selection():
     translations = HEADER_TRANSLATIONS.get(selected_lang, HEADER_TRANSLATIONS['en'])
 
     #st.markdown(f'<h5 style="text-align:center; color: white;">{translations["title"]}</h5>', unsafe_allow_html=True)
-    st.markdown(f'<h5 style="text-align:center; color: white; font-size: 24px;">{translations["title"]}</h5>', unsafe_allow_html=True)
-    st.markdown(f'<h6 style="text-align:center; color: white;">{translations["subtitle"]}</h6>', unsafe_allow_html=True)
+    st.markdown(f'<h5 style="text-align:center; color: white; font-size: 28px;">{translations["title"]}</h5>', unsafe_allow_html=True)
+    st.markdown(f'<h6 style="text-align:center; color: white; font-size: 22px">{translations["subtitle"]}</h6>', unsafe_allow_html=True)
 
     st.markdown("""
         <style>
@@ -260,7 +255,8 @@ def render_language_selection():
     """, unsafe_allow_html=True)
 
     # Display prompt text
-    st.markdown(f'<p class="custom-text">{translations["prompt"]}</p>', unsafe_allow_html=True)
+    #st.markdown(f'<p class="custom-text">{translations["prompt"]}</p>', unsafe_allow_html=True)
+    st.markdown(f'<h6 style="text-align:center; color: white; font-size: 16px">{translations["prompt"]}</h6>', unsafe_allow_html=True)
 
   # Language buttons container
     with st.container():
@@ -318,6 +314,8 @@ def render_language_selection():
                     st.rerun()
 
             st.markdown('</div>', unsafe_allow_html=True)
+    
+    st.markdown(f'<h6 style="text-align:center; color: white; font-size: 16px">{translations["disclaimer"]}</h6>', unsafe_allow_html=True)
             
           
 # Define a dictionary to map language codes to their native names
