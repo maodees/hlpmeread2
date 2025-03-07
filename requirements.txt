@@ -9,3 +9,5 @@ streamlit-js-eval
 opencv-python
 numpy
 pyzbar
+paddlepaddle
+paddleocr
