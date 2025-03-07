@@ -1,5 +1,5 @@
+
 import streamlit as st
-<<<<<<< HEAD
 import numpy as np
 import easyocr
 from gtts import gTTS
@@ -11,7 +11,6 @@ import base64
 import streamlit.components.v1 as components
 import torch
 import cv2
-
 HEADER_TRANSLATIONS = {
     "zh-CN": {
         "title": "收到看不懂的信件吗？",
@@ -51,7 +50,6 @@ HEADER_TRANSLATIONS = {
         "Processing": "செயலாக்கம் நடைபெறுகிறது, தயவுசெய்து காத்திருக்கவும்.",
         "Summary": "முக்கிய உள்ளடக்கத்தை மொழிபெயர்க்கவும்",
         "Retry": "மீண்டும் முயற்சிக்கவும்"
-
     },
     "en": {
         "title": "Have a letter that you don't understand?",
@@ -67,7 +65,6 @@ HEADER_TRANSLATIONS = {
         "Retry": "Try Again"
     }
 }
-
 # Function to convert image to base64
 def get_base64_image(image_path):
     try:
@@ -76,14 +73,12 @@ def get_base64_image(image_path):
     except FileNotFoundError:
         st.error(f"Logo image not found at: {image_path}")
         return None
-
 # Get base64 encoded logo (replace 'logo.png' with your actual filename)
 logo_b64 = get_base64_image("logo.svg")
 if logo_b64:
     # Get the translations based on selected language, default to English
     selected_lang = st.session_state.get('target_language', 'en')
     translations = HEADER_TRANSLATIONS.get(selected_lang, HEADER_TRANSLATIONS['en'])
-
     st.markdown(f"""
         <style>
         .header-container {{
@@ -110,7 +105,6 @@ if logo_b64:
     """, unsafe_allow_html=True)
 else:
     st.header("Help Me Read")  # Fallback if logo fails to load
-
 # Inject custom CSS for styling
 st.markdown("""
     <style>
@@ -125,7 +119,6 @@ st.markdown("""
         display: flex;
         justify-content: center;
     }
-
     .progress-container {
         width: 100%;
         background-color: #f0f2f6;
@@ -134,7 +127,6 @@ st.markdown("""
         position: relative;
         overflow: hidden;
     }
-
     }
     .text-container {
         padding: 1rem !Important;
@@ -145,7 +137,6 @@ st.markdown("""
     }            
     </style>
 """, unsafe_allow_html=True)
-
 # Initialize session state for navigation
 if "screen" not in st.session_state:
     st.session_state.screen = "language_selection"
@@ -159,17 +150,13 @@ if "summary_text" not in st.session_state:
     st.session_state.summary_text = ""
 if "translated_text" not in st.session_state:
     st.session_state.translated_text = ""
-
 def render_language_selection():
-
     # Get translations
     selected_lang = st.session_state.get('target_language', 'en')
     translations = HEADER_TRANSLATIONS.get(selected_lang, HEADER_TRANSLATIONS['en'])
-
     #st.markdown(f'<h5 style="text-align:center; color: white;">{translations["title"]}</h5>', unsafe_allow_html=True)
     st.markdown(f'<h5 style="text-align:center; color: white; font-size: 28px; margin-left: 30px;">{translations["title"]}</h5>', unsafe_allow_html=True)
     st.markdown(f'<h6 style="text-align:center; color: white; font-size: 22px; margin-left: 30px;">{translations["subtitle"]}</h6>', unsafe_allow_html=True)
-
     st.markdown("""
         <style>
         /* Center all content */
@@ -179,7 +166,6 @@ def render_language_selection():
             padding-bottom: 0rem !important;
             margin-top: 1rem !important;   /* This also adds some additional spacing */
         }
-
         /* Force horizontal layout and center content */
         [data-testid="stHorizontalBlock"] {
             display: flex !important;
@@ -190,7 +176,6 @@ def render_language_selection():
             padding: 0 !important;
             width: 343px !important;  /* Set fixed width to match button grid */
         }
-
         /* Fixed width columns */
         [data-testid="stColumn"] {
             display: inline-block !important;
@@ -200,7 +185,6 @@ def render_language_selection():
             margin: 0 !important;
             padding: 0 !important;
         }
-
         /* Button container */
         .button-container {
             display: flex !important;
@@ -210,7 +194,6 @@ def render_language_selection():
             margin: 0 auto !important;
             width: 343px !important;
         }
-
         /* Language button styling */
         .stButton > button {
             -webkit-appearance: none !important;
@@ -234,7 +217,6 @@ def render_language_selection():
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2) !important;
             transition: all 0.3s ease-in-out !important;
         }
-
  
         /* Hover effects */
         .stButton > button:hover {
@@ -253,11 +235,9 @@ def render_language_selection():
         }
         </style>
     """, unsafe_allow_html=True)
-
     # Display prompt text
     #st.markdown(f'<p class="custom-text">{translations["prompt"]}</p>', unsafe_allow_html=True)
     st.markdown(f'<h6 style="text-align:center; color: white; font-size: 16px; margin-left: 30px;">{translations["prompt"]}</h6>', unsafe_allow_html=True)
-
   # Language buttons container
     with st.container():
         st.markdown('<div class="button-container">', unsafe_allow_html=True)
@@ -272,7 +252,6 @@ def render_language_selection():
             if st.button("Bahasa Melayu", key="language_ms", use_container_width=True):
                 st.session_state.target_language = "ms"
                 st.rerun()
-
         # Second row of language buttons
         col3, col4 = st.columns(2)
         with col3:
@@ -283,9 +262,7 @@ def render_language_selection():
             if st.button("English", key="language_en", use_container_width=True):
                 st.session_state.target_language = "en"
                 st.rerun()
-
         st.markdown('</div>', unsafe_allow_html=True)
-
     # Continue button container
     if st.session_state.target_language:
         with st.container():
@@ -312,7 +289,6 @@ def render_language_selection():
                 if st.button(translations["continue"], key="continue_button", use_container_width=True):
                     st.session_state.screen = "image_upload"
                     st.rerun()
-
             st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown(f'<h6 style="text-align:center; color: white; font-size: 16px">{translations["disclaimer"]}</h6>', unsafe_allow_html=True)
@@ -325,10 +301,8 @@ LANGUAGE_MAP = {
     "ta": "தமிழ்",
     "en": "English"
 }
-
 # Fetch the native language name from the dictionary
 native_language = LANGUAGE_MAP.get(st.session_state.target_language, "Unknown")
-
 # Image Upload Screen
 def render_image_upload():
    
@@ -348,15 +322,11 @@ def render_image_upload():
     #        st.session_state.screen = "processing"
     #        st.rerun()
 
-
 # Processing Screen
 def render_processing():
-
     st.markdown(f'<h5 style="text-align: center; color: white;">{translations["Processing"]}</h5>', unsafe_allow_html=True)
-
     # Create an empty placeholder for the progress bar
     progress_placeholder = st.empty()
-
     # Function to update the progress bar with centered text and spinner
     def update_progress(progress, text):
         progress_placeholder.markdown(f"""
@@ -410,29 +380,23 @@ def render_processing():
             </div>
         """, unsafe_allow_html=True)
         time.sleep(1)  # Simulate processing delay
-
     # Initial Progress (Show bar immediately at 15%)
     update_progress(15, "Initializing...")
-
     # Step 1: OCR Processing
     image = Image.open(st.session_state.uploaded_file)
     img_array = np.array(image)
     reader = easyocr.Reader(['en'], gpu=torch.cuda.is_available()) #TAP on GPU
     results = reader.readtext(img_array)
     st.session_state.extracted_text = "\n".join([res[1] for res in results])
-
     # Load image
     #image = Image.open(st.session_state.uploaded_file)
     #img_array = np.array(image)
-
     # Convert to grayscale
     #gray = cv2.cvtColor(img_array, cv2.COLOR_BGR2GRAY)
-
     # Apply adaptive thresholding (binarization)
     #processed_img = cv2.adaptiveThreshold(
     #    gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
     #)
-
     # Resize image for better readability if it's too small
     #height, width = processed_img.shape
     #if width < 800:
@@ -440,13 +404,10 @@ def render_processing():
     #    processed_img = cv2.resize(
     #        processed_img, (width * scale_factor, height * scale_factor), interpolation=cv2.INTER_LINEAR
     #    )
-
     # Remove noise using Gaussian Blur
     #processed_img = cv2.GaussianBlur(processed_img, (3, 3), 0)
-
     # Initialize EasyOCR Reader
     #reader = easyocr.Reader(['en'], gpu=torch.cuda.is_available())
-
     # Run OCR with optimized settings
     #results = reader.readtext(
     #    processed_img,
@@ -456,59 +417,45 @@ def render_processing():
     #    adjust_contrast=0.7,  # Increase contrast
     #    add_margin=0.1    # Add some padding around text
     #)
-
     # Store extracted text in session state
     #extracted_text = "\n".join(results)
     #st.session_state.extracted_text = extracted_text
-
     update_progress(25, "Processing...")
-
     # Step 2: Summarization
     #summarizer = pipeline("summarization", model="facebook/bart-large-cnn")  # Force CPU only
     summarizer = pipeline("summarization", model="facebook/bart-large-cnn", device=0 if torch.cuda.is_available() else -1) #TAP ON GPU
     st.session_state.summary_text = summarizer(st.session_state.extracted_text, max_length=150, min_length=50, do_sample=False)[0]["summary_text"]
-
     update_progress(70, "Summarizing...")
-
     # Step 3: Translation
     st.session_state.translated_text = GoogleTranslator(
         source="en", target=st.session_state.target_language
     ).translate(st.session_state.summary_text)
-
     update_progress(90, "Translating...")
-
     # Step 4: Completion
     update_progress(100, "Done!")
-
     # Finalizing
     time.sleep(1)
     st.session_state.screen = "results"
     st.rerun()
 
-
 # Results Screen
 def render_results():
-
     #st.subheader(f"{translations['Summary']}:")
     st.markdown(f'<h6 style="text-align: left; color: white;">{translations["Summary"]} :</h6>', unsafe_allow_html=True)
     st.markdown(f"<div class='text-container'>{st.session_state.translated_text}</div>", unsafe_allow_html=True)
     #st.download_button("Download Translation", st.session_state.translated_text, file_name="translation.txt", mime="text/plain")
-
     # Generate and save audio file
     tts = gTTS(text=st.session_state.translated_text, lang=st.session_state.target_language, slow=False)
     audio_path = "output.mp3"
     tts.save(audio_path)
 
-
 # Generate and save the audio file
     audio_path = "output.mp3"
     tts = gTTS(text=st.session_state.translated_text, lang=st.session_state.target_language, slow=False)
     tts.save(audio_path)
-
     # Convert the audio file to base64 once
     with open(audio_path, "rb") as f:
         audio_base64 = base64.b64encode(f.read()).decode()
-
     # HTML snippet for auto-play and play button.
     html_code = f"""
     <html>
@@ -555,16 +502,13 @@ def render_results():
     </html>
     """
     components.html(html_code, height=100)
-
 # Display the Restart button only at the end of the process
     #st.button("Restart", on_click=lambda: st.session_state.update({"screen": "image_upload", "uploaded_file": None}))
-
     # Continue button container
     if st.session_state.target_language:
         with st.container():
             st.markdown("""
                 <style>
-
                 /* Language button styling */
                 .stButton > button {
                     width: 100% !important;
@@ -585,7 +529,6 @@ def render_results():
                     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2) !important;
                     transition: all 0.3s ease-in-out !important;
                 }
-
                 .stButton > button:focus {
                     background: #EAF3FF !important;
                     color: #1B8DFF !important;
@@ -609,9 +552,7 @@ def render_results():
                 if st.button(translations["Retry"], key="button-container", use_container_width=True):
                     st.session_state.screen = "language_selection"
                     st.rerun()
-
             st.markdown('</div>', unsafe_allow_html=True)
-
     # Hide extracted text and summary in an expander
     with st.expander("Show Extracted Text and Summary"):
         st.markdown("### Extracted Text")
@@ -620,7 +561,6 @@ def render_results():
         st.markdown("### Summary")
         st.markdown(f"<div class='text-container'>{st.session_state.summary_text}</div>", unsafe_allow_html=True)
  
-
 # Render the appropriate screen
 if st.session_state.screen == "language_selection":
     render_language_selection()
@@ -630,59 +570,25 @@ elif st.session_state.screen == "processing":
     render_processing()
 elif st.session_state.screen == "results":
     render_results()
-
 #----------Change log-------------
 #6 Mar:(RK)
 #Change OCR and Summarizer to tap on GPU
 #Change retry button route to main menu.
-
 #4 Mar: (RK)
 #Added translations for the labels across.
-
 #3 Mar: (RK)
 #Added language selection as first step, then continue button to reduce issue of selecting wrong language at first.
-
 #2 Mar:(RK)
 #Enable auto play of audio once translation is completed.
 #Change to large play audio again button.
-
 #28 Feb: (RK)
 #Re-arranged 1st screen language buttons
 #Hide extracted text and summary at the bottom of the last screen(For testing purpose)
-
 #25 Feb:(RK)
 #Include a progress bar with percentage value in Process screen
 #Add logo on the front page
-
 #24 Feb:(RK)
 #Change to 4 screens. Select Lang-> Upload/Cam -> Process -> Results
 #Add restart button on the results screen.
-
 #22 Feb:(RK)
 #Change general UI based on mockup
-=======
-from pyzbar.pyzbar import decode
-from PIL import Image
-
-# Streamlit title
-st.title("QR Code Scanner")
-
-# File uploader for image
-uploaded_file = st.file_uploader("Upload a QR Code Image", type=["png", "jpg", "jpeg"])
-
-if uploaded_file is not None:
-    # Open the image using PIL
-    image = Image.open(uploaded_file)
-    
-    # Display the uploaded image
-    st.image(image, caption="Uploaded Image", use_column_width=True)
-
-    # Decode QR Code using pyzbar
-    decoded_objects = decode(image)
-    if decoded_objects:
-        for obj in decoded_objects:
-            # Display the decoded data
-            st.success(f"Decoded QR Code Data: {obj.data.decode('utf-8')}")
-    else:
-        st.warning("No QR Code detected.")
->>>>>>> 5c297b3fe9f3ec872ad42c9c3968bb5f705b2912
