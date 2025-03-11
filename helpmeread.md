@@ -1,4 +1,4 @@
-# Help Me Read - Government Correspondence Translation Solution
+# HelpMeRead - Government Correspondence Translation Solution
 
 ## Initial Problem Statement
 Elderly Singaporeans who are not proficient in English face significant challenges in understanding government correspondence. This leads to feelings of disempowerment, frustration, and dependence on others. There is a need for a simple, accessible solution that enables elderly individuals to understand letters from government agencies in their preferred language or dialect with minimal effort, such as scanning a QR code or taking a photo.
