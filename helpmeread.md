@@ -43,7 +43,7 @@ Try it out at: https://go.gov.sg/helpmeread
 ### Key Features
 
 1. Multi-language translation
-![alt text for screen readers](/assets/IMG_7943.jpg "Text to show on mouseover")
+![alt text for screen readers](/assets/IMG_7943.jpg "Text to show on mouseover"){: height="50%"}
 2. AI-powered summarisation
    - Summarises the key intent of government letters (htt
  Audio playback
