@@ -43,6 +43,7 @@ Try it out at: https://go.gov.sg/helpmeread
 ### Key Features
 
 1. Multi-language translation
+(assets/IMG_7943.jpg)
 2. AI-powered summarisation
    - Summarises the key intent of government letters (htt
  Audio playback
