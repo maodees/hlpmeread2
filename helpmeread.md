@@ -25,14 +25,10 @@ Research conducted with six elderly Singaporeans aged **68-86** (across both gen
 
 ### User Preferences
 
-| Role | Preferences |
-|------|-------------|
-| Interviewee 1 | Prefers audio: "Hands-free, don't need to focus so much on small text. More straightforward. Sometimes hard to read." |
-| Interviewee 2 | Prefers intuitive design: "No learning curve required. Prefer to read, but if there is audio, it’s a bonus. Chinese is good enough." |
-| Interviewee 3 | Prefers dialect: "Only read-aloud in dialect is good as that is my main language." |
-| Interviewee 4 | Prefers simplicity: "Must be easy to use. Text and speech (dialect is a plus) to help understanding." |
-| Interviewee 5 | Prefers simplicity and audio: "Yes, must be simple and easy. Read out. Chinese is sufficient for me." |
-| Interviewee 6 | Prefers accessibility: "Must be easy to use with big font. Need to be able to translate to Chinese." |
+| Role | Preferences | Role | Preferences | Role | Preferences |
+|------|-------------|------|-------------|------|-------------|
+| Interviewee 1 | Prefers audio: "Hands-free, don't need to focus so much on small text. More straightforward. Sometimes hard to read." | Interviewee 2 | Prefers intuitive design: "No learning curve required. Prefer to read, but if there is audio, it’s a bonus. Chinese is good enough." | Interviewee 3 | Prefers dialect: "Only read-aloud in dialect is good as that is my main language." |
+| Interviewee 4 | Prefers simplicity: "Must be easy to use. Text and speech (dialect is a plus) to help understanding." | Interviewee 5 | Prefers simplicity and audio: "Yes, must be simple and easy. Read out. Chinese is sufficient for me." | Interviewee 6 | Prefers accessibility: "Must be easy to use with big font. Need to be able to translate to Chinese." |
 
 ## Refined Problem Statement
 **"How might we enable elderly Singaporeans with low English literacy to confidently understand government correspondence on their own?"**
@@ -44,24 +40,20 @@ Try it out at: **[https://go.gov.sg/helpmeread](https://go.gov.sg/helpmeread)**
 
 | **Multi-language Translation** | **AI-powered Summarization** | **Audio Playback** |
 |-----------------------------|--------------------------|--------------------|
-| ![Multi-language](https://github.com/maodees/hlpmeread2/blob/main/assets/IMG_7943.jpg) <br> Supports multiple languages, allowing elderly users to read translations in their preferred language. | ![Summarization](https://github.com/maodees/hlpmeread2/blob/main/assets/IMG_7948.jpg) <br> Summarizes the key intent of government letters for better comprehension. | ![Audio](https://github.com/maodees/hlpmeread2/blob/main/assets/IMG_7948.jpg) <br> Converts translated summaries into audio, enabling users to listen in their preferred language. |
+| ![Multi-language](https://github.com/maodees/hlpmeread2/blob/main/assets/IMG_7943.jpg) <br> Supports multiple languages, allowing elderly users to read translations in their preferred language. | ![Summarization](https://github.com/maodees/hlpmeread2/blob/main/assets/IMG_7943.jpg) <br> Summarizes the key intent of government letters for better comprehension. | ![Audio](https://github.com/maodees/hlpmeread2/blob/main/assets/IMG_7948.jpg) <br> Converts translated summaries into audio, enabling users to listen in their preferred language. |
 
 ## Future Development
-1. **Dialect Support**
-   - Identify potential dialect LLM models for translation.
-2. **Voice Localization**
-   - Implement more "Singaporean" voice options for:
-     - Chinese
-     - Bahasa Melayu
-     - Tamil
+
+| **Feature** | **Details** |
+|------------|------------|
+| **Dialect Support** | Identify potential dialect LLM models for translation. |
+| **Voice Localization** | Implement more "Singaporean" voice options for: <br> - Chinese <br> - Bahasa Melayu <br> - Tamil |
 
 ## Project Team
 
-| Photo | Name | Division | Department |
-|-------|------|----------|------------|
-| ![John Chan](/images/john-chan.jpg) | John Chan | JFAC | GDT |
-| ![Chan Jun Hua](/images/chan-jun-hua.jpg) | Chan Jun Hua | JFAC | GDT |
-| ![Chew Xunmao](/images/chew-xunmao.jpg) | Chew Xunmao | PMOC1 | GDT |
-| ![Georgia Koh](/images/georgia-koh.jpg) | Georgia Koh | JFAC | GDT |
-| ![Ye Rongkai](/images/ye-rongkai.jpg) | Ye Rongkai | JFAC | GDT |
-| ![Zoe Ng](/images/zoe-ng.jpg) | Zoe Ng | DEP | - |
+| ![John Chan](/images/john-chan.jpg) | ![Chan Jun Hua](/images/chan-jun-hua.jpg) | ![Chew Xunmao](/images/chew-xunmao.jpg) | ![Georgia Koh](/images/georgia-koh.jpg) | ![Ye Rongkai](/images/ye-rongkai.jpg) | ![Zoe Ng](/images/zoe-ng.jpg) |
+|------|------|------|------|------|------|
+| **John Chan** | **Chan Jun Hua** | **Chew Xunmao** | **Georgia Koh** | **Ye Rongkai** | **Zoe Ng** |
+| JFAC | JFAC | PMOC1 | JFAC | JFAC | DEP |
+| GDT | GDT | GDT | GDT | GDT | - |
+
