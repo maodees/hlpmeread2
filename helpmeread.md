@@ -33,7 +33,7 @@ Research conducted with six elderly Singaporeans aged **68-86** (across both gen
 ## Refined Problem Statement
 **"How might we enable elderly Singaporeans with low English literacy to confidently understand government correspondence on their own?"**
 
-## Our Solution: Help Me Read
+## Our Solution: HelpMeRead
 Try it out at: **[https://go.gov.sg/helpmeread](https://go.gov.sg/helpmeread)**
 
 ### Key Features
