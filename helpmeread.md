@@ -48,6 +48,7 @@ Try it out at: **[https://go.gov.sg/helpmeread](https://go.gov.sg/helpmeread)**
 |------------|------------|
 | **Dialect Support** | Identify potential dialect LLM models for translation. |
 | **Voice Localization** | Implement more "Singaporean" voice options for: <br> - Chinese <br> - Bahasa Melayu <br> - Tamil |
+| **Karaoke-Style Word Highlighting** |  Synchrony between the spoken words and the highlighted text, for ease of following. |
 
 ## Project Team
 
