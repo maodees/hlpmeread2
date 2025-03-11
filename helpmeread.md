@@ -1,5 +1,5 @@
 
-# Help Me Read - Government Correspondence Translation Solution
+# HelpMeRead - Government Correspondence Translation Solution
 
 ## Initial Problem Statement
 Elderly Singaporeans who are not proficient in English face significant challenges understanding government correspondence, leading to feelings of disempowerment, frustration, and dependence on others. Elderly Singaporeans need a simple, accessible way to understand letters from government agencies in their preferred language or dialect, using minimal steps such as scanning a QR code or taking a photo.
@@ -7,7 +7,7 @@ Elderly Singaporeans who are not proficient in English face significant challeng
 ## Research Findings
 
 ### Demographics
-- As of 2024, elderly makes up 19.9% of Singapore's populationIn 2023, 53% of those aged 65 and above cannot read in English
+- As of 2024, elderly makes up 19.9% of Singapore's population. In 2023, 53% of those aged 65 and above cannot read in English
 
 ### Interview Insights
 Research conducted with 6 elderly Singaporeans aged 68-86 across both genders revealed that they struggle to understand Government correspondence due to language barriers, leading to:
@@ -37,21 +37,19 @@ Research conducted with 6 elderly Singaporeans aged 68-86 across both genders re
 ## Refined Problem Statement
 "How might we enable elderly Singaporeans with low English literacy to confidently understand government correspondence on their own?"
 
-## Our Solution: Help Me Read
+## Our Solution: HelpMeRead
 Try it out at: https://go.gov.sg/helpmeread
 
 ### Key Features
 
 1. Multi-language translation
 2. AI-powered summarisation
-   - Summarises the key intent of government letters (htt
- Audio playback
+   - Summarises the key intent of government letters with Audio playback
    - Converts translated summaries into audio in preferred language
 
 ## Future Development
 1. Dialect Support
    - Identify possible dialect LLM models for translation
-
 2. Voice Localisation
    - Implement more "Singaporean" voice options for:
      - Chinese
@@ -64,7 +62,7 @@ Try it out at: https://go.gov.sg/helpmeread
 |-------|------|-----------|------------|
 | ![John Chan](/images/john-chan.jpg) | John Chan | JFAC | GDT |
 | ![Chan Jun Hua](/images/chan-jun-hua.jpg) | Chan Jun Hua | JFAC | GDT |
-| ![Chew Xunmao](/images/chew-xunmao.jpg) | Chew Xunmao | PMOC1 | GDT |
+| ![Chew Xunmao](https://docs.google.com/drawings/d/e/2PACX-1vTfDjY8H38q5dyBIJRcCw3s8WFuaiNDba-QC1aumPfEGB4i1jozVk5JsTa__X4TSq6YUfGWOuOQNwBl/pub?w=120&h=90) | Chew Xunmao | PMOC1 | GDT |
 | ![Georgia Koh](/images/georgia-koh.jpg) | Georgia Koh | JFAC | GDT |
 | ![Ye Rongkai](/images/ye-rongkai.jpg) | Ye Rongkai | JFAC | GDT |
 | ![Zoe Ng](/images/zoe-ng.jpg) | Zoe Ng | DEP | - |
