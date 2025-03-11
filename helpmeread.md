@@ -44,7 +44,7 @@ Try it out at: **[https://go.gov.sg/helpmeread](https://go.gov.sg/helpmeread)**
 
 | **Multi-language Translation** | **AI-powered Summarization** | **Audio Playback** |
 |-----------------------------|--------------------------|--------------------|
-| ![Multi-language](https://github.com/maodees/hlpmeread2/blob/main/assets/multi-language.jpg) <br> Supports multiple languages, allowing elderly users to read translations in their preferred language. | ![Summarization](https://github.com/maodees/hlpmeread2/blob/main/assets/summarization.jpg) <br> Summarizes the key intent of government letters for better comprehension. | ![Audio](https://github.com/maodees/hlpmeread2/blob/main/assets/audio.jpg) <br> Converts translated summaries into audio, enabling users to listen in their preferred language. |
+| ![Multi-language](https://github.com/maodees/hlpmeread2/blob/main/assets/IMG_7943.jpg) <br> Supports multiple languages, allowing elderly users to read translations in their preferred language. | ![Summarization](https://github.com/maodees/hlpmeread2/blob/main/assets/IMG_7948.jpg) <br> Summarizes the key intent of government letters for better comprehension. | ![Audio](https://github.com/maodees/hlpmeread2/blob/main/assets/IMG_7948.jpg) <br> Converts translated summaries into audio, enabling users to listen in their preferred language. |
 
 ## Future Development
 1. **Dialect Support**
