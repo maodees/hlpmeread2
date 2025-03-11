@@ -42,6 +42,9 @@ Try it out at: **[https://go.gov.sg/helpmeread](https://go.gov.sg/helpmeread)**
 |-----------------------------|--------------------------|--------------------|
 | ![Multi-language](https://github.com/maodees/hlpmeread2/blob/main/assets/IMG_7943.jpg) <br> Supports multiple languages, allowing elderly users to read translations in their preferred language. | ![Summarization](https://github.com/maodees/hlpmeread2/blob/main/assets/IMG_7948.jpg) <br> Summarizes the key intent of government letters for better comprehension. | ![Audio](https://github.com/maodees/hlpmeread2/blob/main/assets/IMG_7948.jpg) <br> Converts translated summaries into audio, enabling users to listen in their preferred language. |
 
+## How it works
+![Poster](https://github.com/maodees/hlpmeread2/blob/main/assets/poster.png)
+
 ## Future Development
 
 | **Feature** | **Details** |
