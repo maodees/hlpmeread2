@@ -51,9 +51,7 @@ Try it out at: **[https://go.gov.sg/helpmeread](https://go.gov.sg/helpmeread)**
 
 ## Project Team
 
-| ![John Chan](/images/john-chan.jpg) | ![Chan Jun Hua](/images/chan-jun-hua.jpg) | ![Chew Xunmao](/images/chew-xunmao.jpg) | ![Georgia Koh](/images/georgia-koh.jpg) | ![Ye Rongkai](/images/ye-rongkai.jpg) | ![Zoe Ng](/images/zoe-ng.jpg) |
+| ![John Chan](https://github.com/maodees/hlpmeread2/blob/main/assets/john.jpg) | ![Chan Jun Hua](https://github.com/maodees/hlpmeread2/blob/main/assets/jh.jpg) | ![Chew Xunmao](https://github.com/maodees/hlpmeread2/blob/main/assets/xm.jpg) | ![Georgia Koh](https://github.com/maodees/hlpmeread2/blob/main/assets/gg.jpg) | ![Ye Rongkai](https://github.com/maodees/hlpmeread2/blob/main/assets/rk.jpg) | ![Zoe Ng](https://github.com/maodees/hlpmeread2/blob/main/assets/zoe.jpg) |
 |------|------|------|------|------|------|
-| **John Chan** | **Chan Jun Hua** | **Chew Xunmao** | **Georgia Koh** | **Ye Rongkai** | **Zoe Ng** |
-| JFAC | JFAC | PMOC1 | JFAC | JFAC | DEP |
-| GDT | GDT | GDT | GDT | GDT | - |
-
+| **John** | **Jun Hua** | **Xunmao** | **Georgia** | **Rongkai** | **Zoe** |
+| JFAC, GDT | JFAC, GDT | PMOC1, PSD | JFAC, GDT | JFAC, GDT | DEP |
