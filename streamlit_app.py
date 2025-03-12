@@ -122,7 +122,7 @@ letters = {
     }
 }
 
-def get_letter_content(letter_id):
+def get_letter_content(letter_id=None):
     """
     Get and display letter content based on letter ID
     
@@ -136,8 +136,8 @@ def get_letter_content(letter_id):
     
     # Get query parameters if letter_id is not provided
     if not letter_id:
-        query_params = st.experimental_get_query_params()
-        letter_id = query_params.get('letter', [None])[0]
+        
+        letter_id = 'letter1'
 
         # Check if letter exists and return content
         if letter_id and letter_id in letters:
