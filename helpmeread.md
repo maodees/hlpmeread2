@@ -1,4 +1,4 @@
-# ![helpmeread](https://github.com/maodees/hlpmeread2/blob/main/assets/HMR_Logo_s.png) HelpMeRead:<br>*Making Government Letters Speak Your Language*
+# HelpMeRead:<br>*Making Government Letters Speak Your Language*
 
 ## Initial Problem Statement
 Elderly Singaporeans who are not proficient in English face significant challenges in understanding government correspondence. This leads to feelings of disempowerment, frustration, and dependence on others. There is a need for a simple, accessible solution that enables elderly individuals to understand letters from government agencies in their preferred language or dialect with minimal effort, such as scanning a QR code or taking a photo.
@@ -40,10 +40,10 @@ Try it out at: **[https://go.gov.sg/helpmeread](https://go.gov.sg/helpmeread)**
 
 | **Multi-language Translation** | **AI-powered Summarization** | **Audio Playback** |
 |-----------------------------|--------------------------|--------------------|
-| ![Multi-language](https://github.com/maodees/hlpmeread2/blob/main/assets/IMG_7943.jpg) <br> Supports multiple languages, allowing elderly users to read translations in their preferred language. | ![Summarization](https://github.com/maodees/hlpmeread2/blob/main/assets/IMG_7948.jpg) <br> Summarizes the key intent of government letters for better comprehension. | ![Audio](https://github.com/maodees/hlpmeread2/blob/main/assets/IMG_7948.jpg) <br> Converts translated summaries into audio, enabling users to listen in their preferred language. |
+| ![Multi-language](https://file.go.gov.sg/multi-lang.jpg) <br> Supports multiple languages, allowing elderly users to read translations in their preferred language. | ![Summarization](https://file.go.gov.sg/hmr-audio.jpg) <br> Summarizes the key intent of government letters for better comprehension. | ![Audio](https://file.go.gov.sg/hmr-audio.jpg) <br> Converts translated summaries into audio, enabling users to listen in their preferred language. |
 
 ## How it works
-![Poster](https://github.com/maodees/hlpmeread2/blob/main/assets/poster.png)
+![Poster](https://file.go.gov.sg/hmrposter.png)
 
 ## Future Development
 
@@ -55,7 +55,7 @@ Try it out at: **[https://go.gov.sg/helpmeread](https://go.gov.sg/helpmeread)**
 
 ## Project Team
 
-| ![John Chan (L)](https://github.com/maodees/hlpmeread2/blob/main/assets/john.png) | ![Chan Jun Hua](https://github.com/maodees/hlpmeread2/blob/main/assets/jh.png) | ![Chew Xunmao](https://github.com/maodees/hlpmeread2/blob/main/assets/xm.png) | ![Georgia Koh](https://github.com/maodees/hlpmeread2/blob/main/assets/gg.png) | ![Ye Rongkai](https://github.com/maodees/hlpmeread2/blob/main/assets/rk.png) | ![Zoe Ng](https://github.com/maodees/hlpmeread2/blob/main/assets/zoe.png) |
+| ![John Chan (L)](https://file.go.gov.sg/johnc.png) | ![Chan Jun Hua](https://file.go.gov.sg/junhua.png) | ![Chew Xunmao](https://file.go.gov.sg/xm.png) | ![Georgia Koh](https://file.go.gov.sg/georgiak.png) | ![Ye Rongkai](https://file.go.gov.sg/rongkai.png) | ![Zoe Ng](https://file.go.gov.sg/zoe.png) |
 |------|------|------|------|------|------|
 | **John** | **Jun Hua** | **Xunmao** | **Georgia** | **Rongkai** | **Zoe** |
 | JFAC, GDT | JFAC, GDT | PMOC1, PSD | JFAC, GDT | JFAC, GDT | DEP |
