@@ -122,7 +122,7 @@ letters = {
     }
 }
 
-def get_letter_content(letter_id=None):
+def get_letter_content(letter_id):
     """
     Get and display letter content based on letter ID
     
@@ -136,8 +136,8 @@ def get_letter_content(letter_id=None):
     
     # Get query parameters if letter_id is not provided
     if not letter_id:
-        
-        letter_id = 'letter1'
+        query_params = st.experimental_get_query_params()
+        letter_id = query_params.get('letter', [None])[0]
 
         # Check if letter exists and return content
         if letter_id and letter_id in letters:
@@ -565,7 +565,7 @@ def render_language_selection():
                 if st.button(translations["continue"], key="continue_button", use_container_width=True):
                     get_letter_content(None)
                     if st.session_state.get('current_title', '').strip(): 
-                        st.session_state.screen = "processing"
+                        st.session_state.screen = "flushscreen"
                         st.rerun()
                     else:
                         st.session_state.screen = "image_upload"
@@ -597,6 +597,36 @@ def render_image_upload():
             st.session_state.uploaded_file = uploaded_file
             st.session_state.screen = "processing"
             st.rerun()
+
+def render_flushscreen():
+    # First, create a full-screen white/custom color overlay
+    st.markdown("""
+        <style>
+        #root > div:first-child {
+            background: linear-gradient(135deg, #1E2A38, #2C3E50) !important;
+        }
+        .fullscreen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #1E2A38, #2C3E50);
+            z-index: 999999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        </style>
+        <div class="fullscreen-overlay"></div>
+        """, unsafe_allow_html=True)
+    # Clear all existing elements
+    st.empty()
+    for _ in range(10):  # Multiple empty calls to ensure clearing
+        st.empty()
+    time.sleep(1)  # 2 second delay
+    st.session_state.screen = "processing"
+    st.rerun()
 
 # Processing Screen
 def render_processing():
@@ -828,9 +858,12 @@ def render_results():
         st.markdown("### Summary")
         st.markdown(f"<div class='text-container'>{st.session_state.summary_text}</div>", unsafe_allow_html=True)
  
+ 
 # Render the appropriate screen
 if st.session_state.screen == "language_selection":
     render_language_selection()
+elif st.session_state.screen == "flushscreen":
+    render_flushscreen()
 elif st.session_state.screen == "image_upload":
     render_image_upload()
 elif st.session_state.screen == "processing":
