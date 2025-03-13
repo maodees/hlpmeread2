@@ -14,7 +14,8 @@ import cv2
 import os
 
 
-import streamlit as st
+print(f"Tesseract path set to: {pytesseract.pytesseract.tesseract_cmd}")
+print(pytesseract.get_tesseract_version())
 
 # Dictionary of letters with clear structure
 letters = {
@@ -170,7 +171,6 @@ def get_letter_content(letter_id):
 #Change OCR reader
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
-
 def enhance_image_for_qr(image):
     """Enhance image for better QR code detection"""
     # Convert to grayscale if needed
@@ -243,20 +243,20 @@ def perform_ocr(image):
         # Convert PIL Image to numpy array
         img_array = np.array(image)
         
-        try:
+        #try:
             # Try enhanced QR detection
-            qr_result = detect_qr_code(img_array)
+        #    qr_result = detect_qr_code(img_array)
             
-            if qr_result:
+        #    if qr_result:
                 # QR code found
-                print("QR Code detected. Content:")
-                print("-" * 50)
-                print(f"Output text: {qr_result}")
-                print("-" * 50)
-                return qr_result
+        #        print("QR Code detected. Content:")
+        #        print("-" * 50)
+        #        print(f"Output text: {qr_result}")
+        #        print("-" * 50)
+        #        return qr_result
                 
-        except Exception as qr_error:
-            print(f"QR detection error: {str(qr_error)}")
+        #except Exception as qr_error:
+        #    print(f"QR detection error: {str(qr_error)}")
             # Continue to OCR if QR detection fails
         
         # Convert to grayscale
@@ -308,6 +308,7 @@ HEADER_TRANSLATIONS = {
         "camera_button": "拍照",
         "Processing": "处理中，请稍候。",
         "Summary": "翻译主要内容",
+        "Back": "返回",
         "Retry": "再试"
     },
     "ms": {
@@ -321,6 +322,7 @@ HEADER_TRANSLATIONS = {
         "camera_button": "Ambil Gambar",
         "Processing": "Memproses, Sila tunggu.",
         "Summary": "Menterjemah isi utama",
+        "Back": "kembali",
         "Retry": "Cuba lagi"
     },
     "ta": {
@@ -334,6 +336,7 @@ HEADER_TRANSLATIONS = {
         "camera_button": "புகைப்படம் எடுக்கவும்",
         "Processing": "செயலாக்கம் நடைபெறுகிறது, தயவுசெய்து காத்திருக்கவும்.",
         "Summary": "முக்கிய உள்ளடக்கத்தை மொழிபெயர்க்கவும்",
+        "Back": "திரும்ப",
         "Retry": "மீண்டும் முயற்சிக்கவும்"
     },
     "en": {
@@ -347,6 +350,7 @@ HEADER_TRANSLATIONS = {
         "camera_button": "Take a Picture",
         "Processing": "Processing, Please wait.",
         "Summary": "Translated Summary",
+        "Back": "Back",
         "Retry": "Try Again"
     }
 }
@@ -390,6 +394,7 @@ if logo_b64:
     """, unsafe_allow_html=True)
 else:
     st.header("Help Me Read")  # Fallback if logo fails to load
+
 # Inject custom CSS for styling
 st.markdown("""
     <style>
@@ -400,17 +405,63 @@ st.markdown("""
     .stApp {
         background: linear-gradient(135deg, #1E2A38, #2C3E50) !important;
     }
-    .stButton {
-        display: flex;
-        justify-content: center;
-    }
+              
     .text-container {
         padding: 1rem !Important;
-        background-color: white !Important;
+        background-color: white !Important; 
         border-radius: 10px !Important;
         margin: 1rem 0 !Important;
         color: black !Important;
-    }            
+    }
+
+        /* Button container */
+        .button-container {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 15px !important;
+            margin: 0 auto !important;
+            width: 343px !important;
+        }
+        
+        /* Language button styling */
+        .stButton > button {
+            width: 100% !important;
+            height: 80px !important;
+            padding: 16px !important;
+            border-radius: 8px !important;
+            border: 2px solid white !important;
+            background: white !important;
+            color: black !important;
+            font-size: 5px !important;
+            font-weight: bold !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+            
+ 
+        /* Hover effects */
+        .stButton > button:hover {
+            transform: scale(1.05) !important;
+            box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3) !important;
+        }
+        .stButton > button:focus,
+        .stButton > button:focus-visible,
+        .stButton > button:active {
+            background: #EAF3FF !important;
+            color: #1B8DFF !important;
+            border: 2px solid #1B8DFF !important;
+            font-weight: bold !important;
+            outline: none !important;
+        }     
+              
+            
     </style>
 """, unsafe_allow_html=True)
 # Initialize session state for navigation
@@ -431,8 +482,8 @@ def render_language_selection():
     selected_lang = st.session_state.get('target_language', 'en')
     translations = HEADER_TRANSLATIONS.get(selected_lang, HEADER_TRANSLATIONS['en'])
     #st.markdown(f'<h5 style="text-align:center; color: white;">{translations["title"]}</h5>', unsafe_allow_html=True)
-    st.markdown(f'<h5 style="text-align:center; color: white; font-size: 28px; margin-left: 30px;">{translations["title"]}</h5>', unsafe_allow_html=True)
-    st.markdown(f'<h6 style="text-align:center; color: white; font-size: 22px; margin-left: 30px;">{translations["subtitle"]}</h6>', unsafe_allow_html=True)
+    #st.markdown(f'<h5 style="text-align:center; color: white; font-size: 28px; margin-left: 30px;">{translations["title"]}</h5>', unsafe_allow_html=True)
+    #st.markdown(f'<h6 style="text-align:center; color: white; font-size: 22px; margin-left: 30px;">{translations["subtitle"]}</h6>', unsafe_allow_html=True)
     st.markdown("""
         <style>
         /* Center all content */
@@ -442,137 +493,108 @@ def render_language_selection():
             padding-bottom: 0rem !important;
             margin-top: 1rem !important;   /* This also adds some additional spacing */
         }
-        /* Force horizontal layout and center content */
-        [data-testid="stHorizontalBlock"] {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            justify-content: center !important;
-            gap: 15px !important;
-            margin: 0 auto !important;
-            padding: 0 !important;
-            width: 343px !important;  /* Set fixed width to match button grid */
-        }
-        /* Fixed width columns */
-        [data-testid="stColumn"] {
-            display: inline-block !important;
-            width: 164px !important;
-            min-width: 164px !important;
-            max-width: 164px !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-        /* Button container */
-        .button-container {
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            gap: 15px !important;
-            margin: 0 auto !important;
-            width: 343px !important;
-        }
-        /* Language button styling */
-        .stButton > button {
-            -webkit-appearance: none !important;
-            -webkit-touch-callout: none !important;
-            -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
-            width: 164px !important;
-            height: 80px !important;
-            padding: 16px !important;
-            border-radius: 8px !important;
-            border: 2px solid white !important;
-            background: transparent !important;
-            color: white !important;
-            font-size: 18px !important;
-            font-weight: bold !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            white-space: nowrap !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2) !important;
-            transition: all 0.3s ease-in-out !important;
-        }
- 
-        /* Hover effects */
-        .stButton > button:hover {
-            transform: scale(1.05) !important;
-            box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3) !important;
-        }
-        .stButton > button:focus,
-        .stButton > button:focus-visible,
-        .stButton > button:active {
-            background: #EAF3FF !important;
-            color: #1B8DFF !important;
-            border: 2px solid #1B8DFF !important;
-            font-weight: bold !important;
-            outline: none !important;
-        }     
+
         }
         </style>
     """, unsafe_allow_html=True)
     # Display prompt text
     #st.markdown(f'<p class="custom-text">{translations["prompt"]}</p>', unsafe_allow_html=True)
-    st.markdown(f'<h6 style="text-align:center; color: white; font-size: 16px; margin-left: 30px;">{translations["prompt"]}</h6>', unsafe_allow_html=True)
+    #st.markdown(f'<h6 style="text-align:center; color: white; font-size: 16px; margin-left: 30px;">{translations["prompt"]}</h6>', unsafe_allow_html=True)
   # Language buttons container
     with st.container():
         st.markdown('<div class="button-container">', unsafe_allow_html=True)
-        
-        # First row of language buttons
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("中文", key="language_zh", use_container_width=True):
-                st.session_state.target_language = "zh-CN"
+
+        # Single column for language buttons
+        if st.button("中文", key="language_zh", use_container_width=True):
+            st.session_state.target_language = "zh-CN"
+            get_letter_content(None)
+            if st.session_state.get('current_title', '').strip(): 
+                st.session_state.screen = "flushscreen"
                 st.rerun()
-        with col2:
-            if st.button("Bahasa Melayu", key="language_ms", use_container_width=True):
-                st.session_state.target_language = "ms"
+            else:
+                st.session_state.screen = "image_upload"
                 st.rerun()
-        # Second row of language buttons
-        col3, col4 = st.columns(2)
-        with col3:
-            if st.button("தமிழ்", key="language_ta", use_container_width=True):
-                st.session_state.target_language = "ta"
+
+        if st.button("Bahasa Melayu", key="language_ms", use_container_width=True):
+            st.session_state.target_language = "ms"
+            get_letter_content(None)
+            if st.session_state.get('current_title', '').strip(): 
+                st.session_state.screen = "flushscreen"
                 st.rerun()
-        with col4:
-            if st.button("English", key="language_en", use_container_width=True):
-                st.session_state.target_language = "en"
+            else:
+                st.session_state.screen = "image_upload"
                 st.rerun()
+
+        if st.button("தமிழ்", key="language_ta", use_container_width=True):
+            st.session_state.target_language = "ta"
+            get_letter_content(None)
+            if st.session_state.get('current_title', '').strip(): 
+                st.session_state.screen = "flushscreen"
+                st.rerun()
+            else:
+                st.session_state.screen = "image_upload"
+                st.rerun()
+
+        if st.button("English", key="language_en", use_container_width=True):
+            st.session_state.target_language = "en"
+            get_letter_content(None)
+            if st.session_state.get('current_title', '').strip(): 
+                st.session_state.screen = "flushscreen"
+                st.rerun()
+            else:
+                st.session_state.screen = "image_upload"
+                st.rerun()
+
         st.markdown('</div>', unsafe_allow_html=True)
     # Continue button container
-    if st.session_state.target_language:
-        with st.container():
-            st.markdown("""
-                <style>
-                /* Continue Button styles */
-                .continue-wrapper {
-                    display: flex;
-                    justify-content: center;
-                    width: 100%;
-                    margin-top: 10px;
-                }
-                div.stButton > button:last-child {
-                    width: 343px !important;
-                    height: 80px !important;
-                }
-                </style>
-                <div class="continue-wrapper">
-            """, unsafe_allow_html=True)
+    #if st.session_state.target_language:
+     #   with st.container():
+     #       st.markdown("""
+     #           <style>
+     #           /* Continue Button styles */
+     #           .continue-wrapper {
+     #               display: flex;
+     #               justify-content: center;
+     #               width: 100%;
+     #               margin-top: 10px;
+     #           }
+     #           div.stButton > button:last-child {
+     #               width: 343px !important;
+     #               height: 80px !important;
+     #           }
+     #           </style>
+     #           <div class="continue-wrapper">
+     #       """, unsafe_allow_html=True)
             
             # Center the continue button using columns
-            col1, col2, col3 = st.columns([1, 2, 1])
-            with st.container():
-                if st.button(translations["continue"], key="continue_button", use_container_width=True):
-                    get_letter_content(None)
-                    if st.session_state.get('current_title', '').strip(): 
-                        st.session_state.screen = "flushscreen"
-                        st.rerun()
-                    else:
-                        st.session_state.screen = "image_upload"
-                        st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
+     #       col1, col2, col3 = st.columns([1, 2, 1])
+            #with st.container():
+            #    if st.button(translations["continue"], key="continue_button", use_container_width=True):
+            #        get_letter_content(None)
+            #        if st.session_state.get('current_title', '').strip(): 
+            #            st.session_state.screen = "flushscreen"
+            #            st.rerun()
+            #        else:
+            #            st.session_state.screen = "image_upload"
+            #            st.rerun()
+            #st.markdown('</div>', unsafe_allow_html=True)
     
-    st.markdown(f'<h6 style="text-align:center; color: white; font-size: 16px">{translations["disclaimer"]}</h6>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <style>
+    .footer {{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        color: white;
+        font-size: 16px;
+        background-color: transparent;
+        padding: 10px;
+    }}
+    </style>
+    <div class="footer">{translations["disclaimer"]}</div> """, unsafe_allow_html=True)
+
             
           
 # Define a dictionary to map language codes to their native names
@@ -589,15 +611,49 @@ native_language = LANGUAGE_MAP.get(st.session_state.target_language, "Unknown")
 def render_image_upload():
    
     #st.markdown(f'<p class="custom-text">{translations["upload_title"]}</p>', unsafe_allow_html=True)
-    st.markdown(f'<h6 style="text-align:center; color: white; font-size: 22px">{translations["upload_title"]}</h6>', unsafe_allow_html=True)
-    col1, col2 = st.columns(2)
-    with col1:
-        uploaded_file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
-        if uploaded_file:
-            st.session_state.uploaded_file = uploaded_file
-            st.session_state.screen = "processing"
-            st.rerun()
+    st.markdown(f'<h6 style="text-align:center; color: white; font-size: 22px; margin-left: 30px">{translations["upload_title"]}</h6>', unsafe_allow_html=True)
+    # File uploader
+    uploaded_file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
 
+    if uploaded_file:
+        st.session_state.uploaded_file = uploaded_file
+        st.session_state.screen = "flushscreen"
+        st.rerun()  # Rerun the app to move to the next screen
+
+# Force layout update and push button down using multiple empty <style> tags
+    for _ in range(5):  # Add multiple empty <style> tags
+        st.markdown("""<style></style>""", unsafe_allow_html=True)
+
+# Reserve space for the Retry button at the bottom
+    bottom_container = st.empty()
+
+    # Add the Back button to the bottom container
+    with bottom_container.container():  # Use .container() to ensure proper rendering
+        # Create columns to center the button
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button(translations["Back"], key="retry_button", use_container_width=True):
+                st.session_state.screen = "language_selection"
+                st.rerun()  # Rerun the app to move to the language selection screen
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    st.markdown(f"""
+    <style>
+    .footer {{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        color: white;
+        font-size: 16px;
+        background-color: transparent;
+        padding: 10px;
+    }}
+    </style>
+    <div class="footer">{translations["disclaimer"]}</div> """, unsafe_allow_html=True)
+
+#Flush screen for QR code flow
 def render_flushscreen():
     # First, create a full-screen white/custom color overlay
     st.markdown("""
@@ -624,13 +680,14 @@ def render_flushscreen():
     st.empty()
     for _ in range(10):  # Multiple empty calls to ensure clearing
         st.empty()
-    time.sleep(1)  # 2 second delay
+    time.sleep(0.5)  # 1 second delay
     st.session_state.screen = "processing"
     st.rerun()
 
+
 # Processing Screen
 def render_processing():
-    st.markdown(f'<h5 style="text-align: center; color: white;">{translations["Processing"]}</h5>', unsafe_allow_html=True)
+    st.markdown(f'<h5 style="text-align: center; color: white; margin-left: 30px;">{translations["Processing"]}</h5>', unsafe_allow_html=True)
     # Create an empty placeholder for the progress bar
     progress_placeholder = st.empty()
     # Function to update the progress bar with centered text and spinner
@@ -802,46 +859,7 @@ def render_results():
 # Display the Restart button only at the end of the process
     # Continue button container
     if st.session_state.target_language:
-        with st.container():
-            st.markdown("""
-                <style>
-                /* Language button styling */
-                .stButton > button {
-                    width: 100% !important;
-                    height: 80px !important;
-                    padding: 16px !important;
-                    border-radius: 8px !important;
-                    border: 2px solid white !important;
-                    background: transparent !important;
-                    color: white !important;
-                    font-size: 18px !important;
-                    font-weight: bold !important;
-                    display: flex !important;
-                    align-items: center !important;
-                    justify-content: center !important;
-                    white-space: nowrap !important;
-                    overflow: hidden !important;
-                    text-overflow: ellipsis !important;
-                    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2) !important;
-                    transition: all 0.3s ease-in-out !important;
-                }
-                .stButton > button:focus {
-                    background: #EAF3FF !important;
-                    color: #1B8DFF !important;
-                    border: 2px solid #1B8DFF !important;
-                    font-weight: bold !important;
-                }
-                /* Prompt text styling */
-                .custom-text {
-                    font-size: 20px;
-                    text-align: center;
-                    margin-bottom: 20px;
-                    color: white;
-                }
-                }
-                </style>
-            """, unsafe_allow_html=True)
-            
+                 
             # Center the continue button using columns
             col1, col2, col3 = st.columns([1, 1, 1])
             with st.container():
