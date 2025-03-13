@@ -14,9 +14,6 @@ import cv2
 import os
 
 
-print(f"Tesseract path set to: {pytesseract.pytesseract.tesseract_cmd}")
-print(pytesseract.get_tesseract_version())
-
 # Dictionary of letters with clear structure
 letters = {
     "letter1": {
@@ -137,7 +134,7 @@ def get_letter_content(letter_id):
     
     # Get query parameters if letter_id is not provided
     if not letter_id:
-        query_params = st.experimental_get_query_params()
+        query_params = st.query_params
         letter_id = query_params.get('letter', [None])[0]
 
         # Check if letter exists and return content
@@ -688,6 +685,21 @@ def render_flushscreen():
 # Processing Screen
 def render_processing():
     st.markdown(f'<h5 style="text-align: center; color: white; margin-left: 30px;">{translations["Processing"]}</h5>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <style>
+    .footer {{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        color: white;
+        font-size: 16px;
+        background-color: transparent;
+        padding: 10px;
+    }}
+    </style>
+    <div class="footer">{translations["disclaimer"]}</div> """, unsafe_allow_html=True)
     # Create an empty placeholder for the progress bar
     progress_placeholder = st.empty()
     # Function to update the progress bar with centered text and spinner
