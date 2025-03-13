@@ -13,7 +13,7 @@ import torch
 import cv2
 import os
 
-
+# test
 # Dictionary of letters with clear structure
 letters = {
     "letter1": {
