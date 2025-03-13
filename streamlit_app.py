@@ -306,6 +306,7 @@ HEADER_TRANSLATIONS = {
         "Processing": "处理中，请稍候。",
         "Summary": "翻译主要内容",
         "Back": "返回",
+        "disclaimer2": "该网站目前处于测试阶段。它使用人工智能进行解释。虽然我们力求准确性，但请核实 HelpMeRead 的内容并独立确认关键细节.",
         "Retry": "再试"
     },
     "ms": {
@@ -320,6 +321,7 @@ HEADER_TRANSLATIONS = {
         "Processing": "Memproses, Sila tunggu.",
         "Summary": "Menterjemah isi utama",
         "Back": "kembali",
+        "disclaimer2": "Laman web ini kini dalam versi beta. Ia menggunakan AI untuk tafsiran. Semasa kami berusaha untuk ketepatan, sila sahkan apa yang HelpMeRead katakan dan sahkan butiran kritikal secara bebas.",
         "Retry": "Cuba lagi"
     },
     "ta": {
@@ -334,6 +336,7 @@ HEADER_TRANSLATIONS = {
         "Processing": "செயலாக்கம் நடைபெறுகிறது, தயவுசெய்து காத்திருக்கவும்.",
         "Summary": "முக்கிய உள்ளடக்கத்தை மொழிபெயர்க்கவும்",
         "Back": "திரும்ப",
+        "disclaimer2": "இந்த இணையதளம் தற்போது பீட்டாவில் உள்ளது. இது விளக்கத்திற்கு AI ஐப் பயன்படுத்துகிறது. துல்லியத்திற்காக நாங்கள் பாடுபடும்போது, ​​தயவுசெய்து HelpMeRead என்ன சொல்கிறது என்பதைச் சரிபார்த்து, முக்கியமான விவரங்களைச் சுதந்திரமாக உறுதிப்படுத்தவும்.",
         "Retry": "மீண்டும் முயற்சிக்கவும்"
     },
     "en": {
@@ -348,6 +351,7 @@ HEADER_TRANSLATIONS = {
         "Processing": "Processing, Please wait.",
         "Summary": "Translated Summary",
         "Back": "Back",
+        "disclaimer2": "This website is currently on beta. It uses AI for interpretation. While we strive for accuracy, please verify what HelpMeRead says and confirm critical details independently.",
         "Retry": "Try Again"
     }
 }
@@ -806,6 +810,8 @@ def render_processing():
 # Results Screen
 def render_results():
     #st.subheader(f"{translations['Summary']}:")
+    st.markdown(f'<h6 style="text-align:center; color: white; font-size: 15px;">{translations["disclaimer2"]}</h6>', unsafe_allow_html=True)
+    
     st.markdown(f'<h6 style="text-align: left; color: white;">{translations["Summary"]} :</h6>', unsafe_allow_html=True)
     st.session_state.translated_text = st.session_state.translated_text.replace("美元", "新元")
     st.markdown(f"<div class='text-container'>{st.session_state.translated_text}</div>", unsafe_allow_html=True)
