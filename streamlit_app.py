@@ -134,7 +134,7 @@ def get_letter_content(letter_id):
     
     # Get query parameters if letter_id is not provided
     if not letter_id:
-        query_params = st.query_params
+        query_params = st.experimental_get_query_params()
         letter_id = query_params.get('letter', [None])[0]
 
         # Check if letter exists and return content
